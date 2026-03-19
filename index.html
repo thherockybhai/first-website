@@ -253,8 +253,7 @@ function billboard(x,z,ry,label1,label2,label3,roofY=0,legDist=11){
   c.fillStyle='#0a0604'; c.fillRect(0,0,1024,512); c.strokeStyle='#e05018'; c.lineWidth=10; c.strokeRect(8,8,1008,496); c.strokeStyle='rgba(224,80,24,0.3)'; c.lineWidth=20; c.strokeRect(3,3,1018,506);
   c.fillStyle='#e05018'; c.font='bold 140px Anton,sans-serif'; c.textAlign='center'; c.fillText(label1,512,190);
   c.fillStyle='#c9a84c'; c.font='bold 90px sans-serif'; c.fillText(label2,512,310);
-  c.fillStyle='rgba(200,80,20,0.7)'; c.font='38px IBM Plex Mono,monospace'; c.letterSpacing='2px'; c.fillText(label3,512,410);
-  const bM=new THREE.Mesh(boardG,new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cvs)}));
+  c.fillStyle='rgba(200,80,20,0.7)'; c.font='38px IBM Plex Mono,monospace'; c.letterSpacing='2px'; c.fillText(label3,512,410);const bM=new THREE.Mesh(boardG,new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cvs)}));
   grp.add(bM); addE(bM,boardG,orangeEdge);
   const l=new THREE.PointLight(0xe05018,1.2,22); l.position.set(0,0,2); grp.add(l);
   grp.position.set(x, (roofY||0) + postH + boardH/2, z); grp.rotation.y=ry; scene.add(grp);
