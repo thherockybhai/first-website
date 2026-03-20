@@ -241,123 +241,136 @@ crosswalk(-5.5,55,9,false); crosswalk(5.5,55,9,false); crosswalk(0,60.5,9,true);
 function streetLight(x,z){ const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.1,4.5,6),new THREE.MeshLambertMaterial({color:0x222018})); pole.position.set(x,2.25,z); pole.castShadow=true; scene.add(pole); const arm=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.06,1.0),new THREE.MeshLambertMaterial({color:0x222018})); arm.position.set(x,4.5,z+0.5); scene.add(arm); const head=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.2,0.5),new THREE.MeshLambertMaterial({color:0xffcc60,emissive:0xffaa20,emissiveIntensity:1.2})); head.position.set(x,4.4,z+0.9); scene.add(head); const pl=new THREE.PointLight(0xff9922,1.2,18); pl.position.set(x,4.2,z+0.9); scene.add(pl); }
 [[-5,5],[5,5],[-5,-5],[5,-5],[-5,-50],[5,-50],[-5,50],[5,50]].forEach(([x,z])=>streetLight(x,z));
 
-function billboard(x,z,ry,label1,label2,label3,roofY=0,legDist=11){
+function billboard(x, z, ry, label1, label2, label3, roofY = 0, legDist = 11) {
 
-  const postH=roofY?6:12, postW=0.5, boardW=14, boardH=7;
-  const grp=new THREE.Group();
+  const postH = roofY ? 6 : 12, postW = 0.5, boardW = 14, boardH = 7;
+  const grp = new THREE.Group();
 
-  const cX = roofY ? legDist/2 : boardW*0.4;
+  const cX = roofY ? legDist / 2 : boardW * 0.4;
 
-  const postM1=new THREE.Mesh(
-    new THREE.BoxGeometry(postW,postH,postW),
-    new THREE.MeshLambertMaterial({color:0x333028})
-  );
-  postM1.position.set(-cX,-boardH/2-postH/2,0);
-  grp.add(postM1);
+  // POSTS
+  const postMat = new THREE.MeshLambertMaterial({ color: 0x333028 });
 
-  const postM2=new THREE.Mesh(
-    new THREE.BoxGeometry(postW,postH,postW),
-    new THREE.MeshLambertMaterial({color:0x333028})
-  );
-  postM2.position.set(cX,-boardH/2-postH/2,0);
-  grp.add(postM2);
+  const post1 = new THREE.Mesh(new THREE.BoxGeometry(postW, postH, postW), postMat);
+  post1.position.set(-cX, -boardH / 2 - postH / 2, 0);
+  grp.add(post1);
 
-  const boardG=new THREE.BoxGeometry(boardW,boardH,0.4);
+  const post2 = new THREE.Mesh(new THREE.BoxGeometry(postW, postH, postW), postMat);
+  post2.position.set(cX, -boardH / 2 - postH / 2, 0);
+  grp.add(post2);
 
-  // ✅ EMPTY CANVAS FIRST
-  const cvs=document.createElement('canvas');
-  cvs.width=1024; 
-  cvs.height=600;
+  // CANVAS
+  const cvs = document.createElement('canvas');
+  cvs.width = 1024;
+  cvs.height = 600;
 
-  const ctx=cvs.getContext('2d');
+  const ctx = cvs.getContext('2d');
 
   const texture = new THREE.CanvasTexture(cvs);
   texture.minFilter = THREE.LinearFilter;
   texture.generateMipmaps = false;
 
-  const bM = new THREE.Mesh(
-    boardG,
+  // BOARD
+  const board = new THREE.Mesh(
+    new THREE.BoxGeometry(boardW, boardH, 0.4),
     new THREE.MeshBasicMaterial({ map: texture })
   );
 
-  grp.add(bM);
-  addE(bM,boardG,orangeEdge);
+  grp.add(board);
 
-  const light=new THREE.PointLight(0xe05018,1.2,22);
-  light.position.set(0,0,2);
+  // GLOW LIGHT
+  const light = new THREE.PointLight(0xe05018, 1.5, 30);
+  light.position.set(0, 0, 3);
   grp.add(light);
 
-  grp.position.set(x,(roofY||0)+postH+boardH/2,z);
-  grp.rotation.y=ry;
+  // POSITION
+  grp.position.set(x, (roofY || 0) + postH + boardH / 2, z);
+  grp.rotation.y = ry;
+
   scene.add(grp);
 
-  // 🔥 DRAW FINAL TEXT
-  function drawFinal(){
-    ctx.clearRect(0,0,cvs.width,cvs.height);
+  // ===== DRAW FINAL =====
+  function drawFinal() {
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
 
-    ctx.fillStyle='#0a0604';
-    ctx.fillRect(0,0,1024,512);
+    // Background
+    ctx.fillStyle = '#0a0604';
+    ctx.fillRect(0, 0, 1024, 600);
 
-    ctx.strokeStyle='#e05018';
-    ctx.lineWidth=10;
-    ctx.strokeRect(8,8,1008,496);
+    // Borders
+    ctx.strokeStyle = '#e05018';
+    ctx.lineWidth = 10;
+    ctx.strokeRect(8, 8, 1008, 584);
 
-    ctx.strokeStyle='rgba(224,80,24,0.3)';
-    ctx.lineWidth=20;
-    ctx.strokeRect(3,3,1018,506);
+    ctx.strokeStyle = 'rgba(224,80,24,0.3)';
+    ctx.lineWidth = 20;
+    ctx.strokeRect(3, 3, 1018, 594);
 
-    ctx.fillStyle='#e05018';
-    ctx.font='bold 140px Anton';
-    ctx.textAlign='center';
-    ctx.fillText(label1,512,170);
+    // TEXT
+    ctx.textAlign = 'center';
 
-    ctx.fillStyle='#c9a84c';
-    ctx.font='bold 90px Barlow Condensed';
-    ctx.fillText(label2,512,310);
+    ctx.fillStyle = '#e05018';
+    ctx.font = 'bold 140px Anton';
+    ctx.fillText(label1, 512, 180);
 
-    ctx.fillStyle='rgba(200,80,20,0.7)';
-    ctx.font='38px IBM Plex Mono';
-    ctx.fillText(label3,512,410);
+    ctx.fillStyle = '#c9a84c';
+    ctx.font = 'bold 90px "Barlow Condensed"';
+    ctx.fillText(label2, 512, 340);
+
+    ctx.fillStyle = 'rgba(200,80,20,0.7)';
+    ctx.font = '40px "IBM Plex Mono"';
+    ctx.fillText(label3, 512, 460);
 
     texture.needsUpdate = true;
   }
 
-  // ⚡ GLITCH EFFECT
-  function glitchReveal(){
-    let frames = 12;
+  // ===== GLITCH =====
+  function glitchReveal() {
+    let frames = 15;
 
-    function glitch(){
-      if(frames-- <= 0){
+    function glitch() {
+      if (frames-- <= 0) {
         drawFinal();
         return;
       }
 
-      ctx.clearRect(0,0,cvs.width,cvs.height);
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
 
-      for(let i=0;i<25;i++){
+      // random scanlines
+      for (let i = 0; i < 30; i++) {
         ctx.fillStyle = `rgba(224,80,24,${Math.random()})`;
         ctx.fillRect(
-          Math.random()*1024,
-          Math.random()*512,
-          Math.random()*200,
+          Math.random() * 1024,
+          Math.random() * 600,
+          Math.random() * 200,
           2
         );
       }
 
+      // random text flicker
+      ctx.fillStyle = `rgba(224,80,24,${Math.random()})`;
+      ctx.font = 'bold 140px Anton';
+      ctx.textAlign = 'center';
+      ctx.fillText(label1, 512 + (Math.random() - 0.5) * 10, 180);
+
       texture.needsUpdate = true;
 
-      setTimeout(glitch,40);
+      setTimeout(glitch, 50);
     }
 
     glitch();
   }
 
-  // 🚀 WAIT FOR FONTS → THEN GLITCH
-  document.fonts.ready.then(()=>{
-    glitchReveal();
-  });
+  // WAIT FOR FONTS
+  if (document.fonts) {
+    document.fonts.ready.then(glitchReveal);
+  } else {
+    // fallback
+    setTimeout(glitchReveal, 500);
+  }
 }
-/* 2. FULL CITY GENERATION, RESTORED */
+  
+  /* 2. FULL CITY GENERATION, RESTORED */
 function makeBuilding(x,z,floors,bw,bd,type){
   const group=new THREE.Group(); const flH=2.6; const totalH=floors*flH;
   if(type==='a'){
@@ -388,6 +401,9 @@ for(let i=-3;i<=3;i++){
   makeBuilding(72, i*18-4, 3+Math.floor(Math.random()*3), 5.5, 6+Math.random(), 'o');
 }
 
+billboard(0, -25, 0, "RSM", "SECURITY", "SERVICES");
+billboard(-45, 0, Math.PI / 2, "24/7", "PROTECTION", "GUARANTEED");
+billboard(45, 0, -Math.PI / 2, "TRUST", "DISCIPLINE", "SAFETY");
 const PC=800; const pPos=new Float32Array(PC*3); const pSpeed=new Float32Array(PC);
 for(let i=0;i<PC;i++){ pPos[i*3]=(Math.random()-0.5)*140; pPos[i*3+1]=Math.random()*30; pPos[i*3+2]=(Math.random()-0.5)*140; pSpeed[i]=0.005+Math.random()*0.012; }
 const pGeo=new THREE.BufferGeometry(); pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
