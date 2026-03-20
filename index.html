@@ -244,6 +244,7 @@ function streetLight(x,z){ const pole=new THREE.Mesh(new THREE.CylinderGeometry(
 
 function billboard(x, z, ry, label1, label2, label3, roofY = 0, legDist = 11, isSpecial = false) {
 
+  isSpecial = !!isSpecial;
   const postH = roofY ? 6 : 12, postW = 0.5, boardW = 14, boardH = 7;
   const grp = new THREE.Group();
 
@@ -331,32 +332,26 @@ function drawFinal() {
 
   ctx.fillText(label1, 512, 180);
 
-  // ===== MULTI-LANGUAGE LINE =====
   if (isSpecial) {
-    ctx.shadowBlur = 10;
-    ctx.fillStyle = '#ffffff';
+  ctx.shadowBlur = 10;
+  ctx.fillStyle = '#ffffff';
 
-    // 🔥 FIXED FONT SUPPORT
-    ctx.font = 'bold 70px "Noto Sans Devanagari","Noto Sans Kannada"';
+  const parts = label2.split(' ');
 
-    ctx.fillText(label2, 512, 340);
-  } else {
-    ctx.font = 'bold 90px Barlow Condensed';
+  // Hindi
+  ctx.font = 'bold 70px "Noto Sans Devanagari"';
+  ctx.fillText(parts[0], 350, 340);
 
-    const chars = label2.split('');
-    let startX = 512 - (chars.length * 22);
+  // Kannada
+  ctx.font = 'bold 70px "Noto Sans Kannada"';
+  ctx.fillText(parts[1], 680, 340);
 
-    chars.forEach((ch, i) => {
-      const on = Math.random() > 0.2;
-
-      ctx.shadowColor = '#ffffff';
-      ctx.shadowBlur = on ? 18 : 1;
-      ctx.fillStyle = on ? '#ffffff' : '#444';
-
-      ctx.fillText(ch, startX + i * 44, 340);
-    });
-  }
-
+} else {
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 90px Barlow Condensed';
+  ctx.fillText(label2, 512, 340);
+}
   // ===== SCROLL TEXT =====
   scrollX -= 4;
   if (scrollX < -1000) scrollX = 1024;
