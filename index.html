@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RSM Security Services</title>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@400;600;700&family=IBM+Plex+Mono:wght@400;700&family=Outfit:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@700&family=Noto+Sans+Kannada:wght@700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <style>
@@ -241,7 +242,7 @@ crosswalk(-5.5,55,9,false); crosswalk(5.5,55,9,false); crosswalk(0,60.5,9,true);
 function streetLight(x,z){ const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.1,4.5,6),new THREE.MeshLambertMaterial({color:0x222018})); pole.position.set(x,2.25,z); pole.castShadow=true; scene.add(pole); const arm=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.06,1.0),new THREE.MeshLambertMaterial({color:0x222018})); arm.position.set(x,4.5,z+0.5); scene.add(arm); const head=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.2,0.5),new THREE.MeshLambertMaterial({color:0xffcc60,emissive:0xffaa20,emissiveIntensity:1.2})); head.position.set(x,4.4,z+0.9); scene.add(head); const pl=new THREE.PointLight(0xff9922,1.2,18); pl.position.set(x,4.2,z+0.9); scene.add(pl); }
 [[-5,5],[5,5],[-5,-5],[5,-5],[-5,-50],[5,-50],[-5,50],[5,50]].forEach(([x,z])=>streetLight(x,z));
 
-function billboard(x, z, ry, label1, label2, label3, roofY = 0, legDist = 11) {
+function billboard(x, z, ry, label1, label2, label3, roofY = 0, legDist = 11, isSpecial = false) {
 
   const postH = roofY ? 6 : 12, postW = 0.5, boardW = 14, boardH = 7;
   const grp = new THREE.Group();
@@ -294,32 +295,52 @@ function billboard(x, z, ry, label1, label2, label3, roofY = 0, legDist = 11) {
 
   let scrollX = 1024;
 
-  function drawFinal() {
-    ctx.clearRect(0, 0, 1024, 600);
+function drawFinal() {
+  ctx.clearRect(0, 0, 1024, 600);
 
-    ctx.fillStyle = '#0a0604';
-    ctx.fillRect(0, 0, 1024, 600);
+  ctx.fillStyle = '#0a0604';
+  ctx.fillRect(0, 0, 1024, 600);
 
-    ctx.textAlign = 'center';
+  ctx.textAlign = 'center';
 
-    // BORDER GLOW
+  // BORDER (only glow for special board)
+  if (isSpecial) {
     ctx.shadowColor = '#ff5a1f';
     ctx.shadowBlur = 25;
-    ctx.strokeStyle = '#e05018';
-    ctx.lineWidth = 10;
-    ctx.strokeRect(8, 8, 1008, 584);
-    ctx.shadowBlur = 0;
+  }
 
-    const buzz = 0.7 + Math.random() * 0.6;
+  ctx.strokeStyle = '#e05018';
+  ctx.lineWidth = 10;
+  ctx.strokeRect(8, 8, 1008, 584);
+  ctx.shadowBlur = 0;
 
-    // TOP TEXT
+  const buzz = 0.7 + Math.random() * 0.6;
+
+  // ===== TITLE =====
+  if (isSpecial) {
     ctx.shadowColor = '#ff3c00';
     ctx.shadowBlur = 20 * buzz;
+    ctx.fillStyle = '#ff5522';
+
+    // 🔥 NEW FONT
+    ctx.font = 'bold 110px Outfit';
+  } else {
     ctx.fillStyle = '#e05018';
     ctx.font = 'bold 140px Anton';
-    ctx.fillText(label1, 512, 180);
+  }
 
-    // PARTIAL FLICKER (clean spacing)
+  ctx.fillText(label1, 512, 180);
+
+  // ===== MULTI-LANGUAGE LINE =====
+  if (isSpecial) {
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = '#ffffff';
+
+    // 🔥 FIXED FONT SUPPORT
+    ctx.font = 'bold 70px "Noto Sans Devanagari","Noto Sans Kannada"';
+
+    ctx.fillText(label2, 512, 340);
+  } else {
     ctx.font = 'bold 90px Barlow Condensed';
 
     const chars = label2.split('');
@@ -334,46 +355,50 @@ function billboard(x, z, ry, label1, label2, label3, roofY = 0, legDist = 11) {
 
       ctx.fillText(ch, startX + i * 44, 340);
     });
-
-    // SCROLL TEXT
-    scrollX -= 4;
-    if (scrollX < -1000) scrollX = 1024;
-
-    ctx.shadowColor = '#ff7a2a';
-    ctx.shadowBlur = 8;
-    ctx.fillStyle = '#ff8844';
-    ctx.font = '40px IBM Plex Mono';
-    ctx.fillText(label3 + "   ◆   " + label3, scrollX, 460);
-
-    ctx.shadowBlur = 0;
-
-    // REAL RAIN STREAKS
-    for (let i = 0; i < 20; i++) {
-      ctx.fillStyle = 'rgba(255,255,255,0.03)';
-      ctx.fillRect(
-        Math.random() * 1024,
-        Math.random() * 600,
-        2,
-        Math.random() * 80
-      );
-    }
-
-    texture.needsUpdate = true;
   }
 
-  // 🚀 NO setInterval → controlled by main loop
-  grp.userData.update = () => {
+  // ===== SCROLL TEXT =====
+  scrollX -= 4;
+  if (scrollX < -1000) scrollX = 1024;
 
-    // tube flicker
+  ctx.shadowColor = '#ff7a2a';
+  ctx.shadowBlur = isSpecial ? 12 : 8;
+
+  ctx.fillStyle = '#ff8844';
+  ctx.font = '40px IBM Plex Mono';
+  ctx.fillText(label3 + "   ◆   " + label3, scrollX, 460);
+
+  ctx.shadowBlur = 0;
+
+  // RAIN
+  for (let i = 0; i < 20; i++) {
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    ctx.fillRect(
+      Math.random() * 1024,
+      Math.random() * 600,
+      2,
+      Math.random() * 80
+    );
+  }
+
+  texture.needsUpdate = true;
+}
+
+grp.userData.update = () => {
+
+  // 🔥 flicker ONLY for Sachin board
+  if (isSpecial) {
     if (Math.random() > 0.7) {
       light.intensity = 0.5 + Math.random() * 3;
     } else {
       light.intensity = 1.5;
     }
+  } else {
+    light.intensity = 1.2; // stable
+  }
 
-    drawFinal();
-  };
-
+  drawFinal();
+};
 }
   /* 2. FULL CITY GENERATION, RESTORED */
 function makeBuilding(x,z,floors,bw,bd,type){
@@ -417,7 +442,8 @@ billboard(45, 0, -Math.PI / 2, "TRUST", "DISCIPLINE", "SAFETY");
   "सचिन ಸ್ಟ್ರೀಟ್",
   "WELCOME TO SACHIN STREET",
   10.4,
-  10
+  10,
+  true
 );
 const PC=800; const pPos=new Float32Array(PC*3); const pSpeed=new Float32Array(PC);
 for(let i=0;i<PC;i++){ pPos[i*3]=(Math.random()-0.5)*140; pPos[i*3+1]=Math.random()*30; pPos[i*3+2]=(Math.random()-0.5)*140; pSpeed[i]=0.005+Math.random()*0.012; }
