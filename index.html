@@ -63,10 +63,8 @@ nav{position:fixed;top:0;left:0;right:0;height:54px;z-index:995;background:rgba(
 .slbl{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(180,150,110,0.75);letter-spacing:0.13em;text-transform:uppercase}
 .sdv{grid-column:1/-1;height:0.5px;background:rgba(200,80,20,0.2)}
 .sft{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(200,80,20,0.5);letter-spacing:0.1em;text-align:center;margin-top:10px;text-transform:uppercase}
-
 .f-ant{font-family:'Anton',sans-serif} .f-mon{font-family:'IBM Plex Mono',monospace}
 .c-red{color:#b91c1c} .c-gld{color:#c9a84c} .c-mut{color:#8a8a7a} .c-ow{color:#e8e4d8}
-
 section{position:relative;z-index:5;background:#0a0604;}
 .he{opacity:0}
 .swrap{display:flex;gap:48px;padding:48px 80px 80px;max-width:1400px;margin:0 auto}
@@ -76,13 +74,165 @@ section{position:relative;z-index:5;background:#0a0604;}
 .scard:hover{background:#1a1c17;transform:translateY(-3px)}
 .sc-r:hover{border-left-color:#b91c1c} .sc-g:hover{border-left-color:#c9a84c}
 .sci{width:36px;height:36px;display:flex;justify-content:center;align-items:center}
-
 .wgrd{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:40px 80px;max-width:1400px;margin:0 auto}
 .wcd{background:#141610;border-top:2px solid #b91c1c;border-radius:8px;padding:28px;transition:0.3s}
 .wcd:hover{background:rgba(185,28,28,.08);border-top-color:#ff3333;box-shadow:0 4px 24px rgba(185,28,28,.2)}
-
 .tcon{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding:40px 80px;gap:20px;scrollbar-width:none}
 .tcd{flex:0 0 380px;scroll-snap-align:start;background:rgba(20,22,16,.9);border:0.5px solid rgba(185,28,28,.25);border-radius:16px;padding:32px;position:relative}
+
+/* ===== PREMIUM GLASS TITLE — ALL VARIANTS ===== */
+.glass-title {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 28px;
+  padding: 12px 28px;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* RED variant (Security & Facility) */
+.glass-title.red {
+  background: rgba(185, 28, 28, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(185, 28, 28, 0.25);
+  box-shadow: 0 0 12px rgba(185, 28, 28, 0.2), inset 0 0 10px rgba(185, 28, 28, 0.1);
+}
+.glass-title.red span {
+  background: linear-gradient(90deg, #ff4d2d, #c9a84c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.glass-title.red:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 0 30px rgba(255, 80, 20, 0.55), inset 0 0 18px rgba(255, 80, 20, 0.2);
+}
+.glass-title.red::after {
+  background: linear-gradient(to right, rgba(255, 80, 20, 0.9), transparent);
+}
+.glass-title.red .glow {
+  background: radial-gradient(circle, rgba(255, 80, 20, 0.38), transparent 62%);
+}
+
+/* GOLD variant (Labour Management) */
+.glass-title.gold {
+  background: rgba(201, 168, 76, 0.07);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(201, 168, 76, 0.22);
+  box-shadow: 0 0 12px rgba(201, 168, 76, 0.18), inset 0 0 10px rgba(201, 168, 76, 0.1);
+}
+.glass-title.gold span {
+  background: linear-gradient(90deg, #c9a84c, #f5d87a, #c9a84c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.glass-title.gold:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 0 30px rgba(201, 168, 76, 0.5), inset 0 0 18px rgba(201, 168, 76, 0.18);
+}
+.glass-title.gold::after {
+  background: linear-gradient(to right, rgba(201, 168, 76, 0.9), transparent);
+}
+.glass-title.gold .glow {
+  background: radial-gradient(circle, rgba(201, 168, 76, 0.38), transparent 62%);
+}
+
+/* SECTION HEADER variant (Our Services, About, etc.) */
+.glass-title.section-hd {
+  background: rgba(200, 80, 20, 0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(200, 80, 20, 0.18);
+  box-shadow: 0 0 14px rgba(200, 80, 20, 0.15), inset 0 0 10px rgba(200, 80, 20, 0.08);
+  padding: 6px 20px;
+}
+.glass-title.section-hd span {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  background: linear-gradient(90deg, #c9a84c, #e08040);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.glass-title.section-hd:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 0 22px rgba(200, 80, 20, 0.4), inset 0 0 14px rgba(200, 80, 20, 0.15);
+}
+.glass-title.section-hd::after {
+  background: linear-gradient(to right, rgba(200, 80, 20, 0.8), transparent);
+}
+.glass-title.section-hd .glow {
+  background: radial-gradient(circle, rgba(200, 80, 20, 0.32), transparent 62%);
+}
+
+/* TIMELINE variant */
+.glass-title.timeline {
+  background: rgba(185, 28, 28, 0.06);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(185, 28, 28, 0.2);
+  box-shadow: 0 0 10px rgba(185, 28, 28, 0.15), inset 0 0 8px rgba(185, 28, 28, 0.08);
+  padding: 6px 18px;
+}
+.glass-title.timeline span {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  background: linear-gradient(90deg, #8a8a7a, #c9a84c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.glass-title.timeline:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 0 20px rgba(185, 28, 28, 0.35), inset 0 0 12px rgba(185, 28, 28, 0.12);
+}
+.glass-title.timeline::after {
+  background: linear-gradient(to right, rgba(185, 28, 28, 0.8), transparent);
+}
+.glass-title.timeline .glow {
+  background: radial-gradient(circle, rgba(185, 28, 28, 0.32), transparent 62%);
+}
+
+/* Shared text style for red/gold variants */
+.glass-title.red span,
+.glass-title.gold span {
+  font-family: 'Outfit', 'Anton', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* TAIL STREAK — shared */
+.glass-title::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -60px;
+  width: 90px;
+  height: 2px;
+  transform: translateY(-50%);
+  opacity: 0.7;
+  animation: tailFlow 2s linear infinite;
+}
+@keyframes tailFlow {
+  0%   { right: -90px; opacity: 0; }
+  50%  { opacity: 1; }
+  100% { right: -20px; opacity: 0; }
+}
+
+/* PARALLAX GLOW — shared */
+.glow {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: transform 0.08s ease;
+  opacity: 0.8;
+  border-radius: 50%;
+}
 
 @media(max-width:1024px){.swrap,.wgrd,#abt div[style*="max-width:1400px"]{flex-direction:column!important;grid-template-columns:1fr}.wgrd{grid-template-columns:repeat(2,1fr)}#cnt .cr{padding:40px 80px}}
 @media(max-width:768px){
@@ -106,12 +256,10 @@ section{position:relative;z-index:5;background:#0a0604;}
   </svg>
 </div>
 <div id="scanlines"></div>
-
 <nav id="nav">
   <div class="logo-text">RSM<span>Security Services</span></div>
   <div class="nl"><a href="#hero">Home</a><a href="#srv">Services</a><a href="#abt">About</a><a href="#why">Why Us</a><a href="#tst">Clients</a><a href="#cnt">Contact</a></div>
 </nav>
-
 <section id="hero">
   <canvas id="three-canvas"></canvas>
   <div id="vig"></div>
@@ -122,7 +270,6 @@ section{position:relative;z-index:5;background:#0a0604;}
     <div class="hs">Protected by RSM Security Services</div>
   </div>
   <div class="cbr" id="ctl"></div><div class="cbr" id="ctr"></div><div class="cbr" id="cbl"></div><div class="cbr" id="cbr"></div>
-  
   <div id="ho">
     <div id="hlft">
       <div class="brow"><div class="pd"></div><span class="btx">Operational Since 2011 · Hassan &amp; Bengaluru</span></div>
@@ -152,21 +299,39 @@ section{position:relative;z-index:5;background:#0a0604;}
 </div></div>
 
 <section id="srv" style="padding:80px 0;min-height:100vh">
-  <div style="text-align:center"><div class="f-mon c-mut" style="font-size:11px;letter-spacing:.2em">WHAT WE DELIVER</div><div class="f-ant c-ow" style="font-size:72px;line-height:1;margin-top:8px">Our Services</div><div style="width:64px;height:2px;background:#b91c1c;margin:16px auto"></div></div>
+  <div style="text-align:center">
+    <!-- SECTION HEADER: "WHAT WE DELIVER" -->
+    <div style="display:inline-block">
+      <div class="glass-title section-hd" data-glow>
+        <span>WHAT WE DELIVER</span>
+        <div class="glow"></div>
+      </div>
+    </div>
+    <div class="f-ant c-ow" style="font-size:72px;line-height:1;margin-top:8px">Our Services</div>
+    <div style="width:64px;height:2px;background:#b91c1c;margin:16px auto"></div>
+  </div>
   <div class="swrap">
     <div class="scol">
-      <div class="c-red" style="font-weight:700;font-size:22px;margin-bottom:24px;text-transform:uppercase">Security & Facility</div>
+      <!-- RED GLASS TITLE: Security & Facility -->
+      <div class="glass-title red" data-glow>
+        <span>Security &amp; Facility</span>
+        <div class="glow"></div>
+      </div>
       <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M2 20h20M4 20V8l6 3V6l6 3v11M16 20V4l6 3v13M8 17h2"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Industrial Security</div><div class="f-mon c-mut" style="font-size:11px">Comprehensive protection for manufacturing.</div></div></div>
       <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Housing Society Protection</div><div class="f-mon c-mut" style="font-size:11px">24/7 guarded security for complexes.</div></div></div>
-      <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Gunman & Body Guard</div><div class="f-mon c-mut" style="font-size:11px">Armed personnel & VIP protection.</div></div></div>
-      <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Facility Management</div><div class="f-mon c-mut" style="font-size:11px">Repair, Restore, Maintain & Represent.</div></div></div>
+      <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Gunman &amp; Body Guard</div><div class="f-mon c-mut" style="font-size:11px">Armed personnel &amp; VIP protection.</div></div></div>
+      <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Facility Management</div><div class="f-mon c-mut" style="font-size:11px">Repair, Restore, Maintain &amp; Represent.</div></div></div>
     </div>
     <div class="scol">
-      <div class="c-gld" style="font-weight:700;font-size:22px;margin-bottom:24px;text-transform:uppercase">Labour Management</div>
-      <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Qualified & Experienced Staff</div><div class="f-mon c-mut" style="font-size:11px">Vetted professional personnel.</div></div></div>
+      <!-- GOLD GLASS TITLE: Labour Management -->
+      <div class="glass-title gold" data-glow>
+        <span>Labour Management</span>
+        <div class="glow"></div>
+      </div>
+      <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Qualified &amp; Experienced Staff</div><div class="f-mon c-mut" style="font-size:11px">Vetted professional personnel.</div></div></div>
       <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Skilled Operators</div><div class="f-mon c-mut" style="font-size:11px">Professionally trained operational staff.</div></div></div>
       <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Performance Measured</div><div class="f-mon c-mut" style="font-size:11px">Metrics-driven service standards.</div></div></div>
-      <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Technical & Office Roles</div><div class="f-mon c-mut" style="font-size:11px">Labour for technical operations across Karnataka.</div></div></div>
+      <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Technical &amp; Office Roles</div><div class="f-mon c-mut" style="font-size:11px">Labour for technical operations across Karnataka.</div></div></div>
     </div>
   </div>
 </section>
@@ -174,7 +339,11 @@ section{position:relative;z-index:5;background:#0a0604;}
 <section id="abt" style="background:#1a2208;padding:80px;min-height:80vh">
   <div class="w" style="display:flex;max-width:1400px;margin:0 auto;gap:60px">
     <div style="flex:0 0 45%">
-      <div class="f-mon c-mut he" style="font-size:11px;letter-spacing:.2em">EST. 2011 &middot; HASSAN, KARNATAKA</div>
+      <!-- TIMELINE GLASS TITLE -->
+      <div class="glass-title timeline" data-glow>
+        <span>EST. 2011 &middot; HASSAN, KARNATAKA</span>
+        <div class="glow"></div>
+      </div>
       <h3 class="f-ant c-ow he" style="font-size:52px;line-height:1.1;margin:12px 0 24px">Built on Trust.<br>Deployed with Precision.</h3>
       <p class="c-ow he" style="font-size:15px;line-height:1.8;margin-bottom:16px;font-family:'Barlow Condensed',sans-serif">RSM Security Services was founded in 2011 with a singular mission — to deliver professional, reliable, and disciplined security and facility management solutions to clients across Karnataka. From industrial premises to residential societies, we guard what matters most.</p>
       <div class="he f-inter c-ow" style="background:rgba(185,28,28,.08);border:.5px solid rgba(185,28,28,.3);border-radius:8px;padding:16px;margin-top:24px;font-size:13px;display:grid;grid-template-columns:100px 1fr;gap:12px;align-items:center">
@@ -186,216 +355,169 @@ section{position:relative;z-index:5;background:#0a0604;}
       <div class="he" style="position:relative;margin-bottom:30px"><div style="position:absolute;left:-20px;top:12px;width:8px;height:8px;background:#b91c1c;border-radius:50%;box-shadow:0 0 10px rgba(185,28,28,.6)"></div><div class="f-ant c-red" style="font-size:36px;line-height:1">2011</div><div class="f-mon c-mut" style="font-size:12px;margin-top:4px">RSM Security Founded, Hassan</div></div>
       <div class="he" style="position:relative;margin-bottom:30px"><div style="position:absolute;left:-20px;top:12px;width:8px;height:8px;background:#b91c1c;border-radius:50%;"></div><div class="f-ant c-red" style="font-size:36px;line-height:1">2015</div><div class="f-mon c-mut" style="font-size:12px;margin-top:4px">Facility Management Services Added</div></div>
       <div class="he" style="position:relative;margin-bottom:30px"><div style="position:absolute;left:-20px;top:12px;width:8px;height:8px;background:#b91c1c;border-radius:50%;"></div><div class="f-ant c-red" style="font-size:36px;line-height:1">2019</div><div class="f-mon c-mut" style="font-size:12px;margin-top:4px">200+ Active Clients Across Karnataka</div></div>
-      <div class="he" style="position:relative;margin-bottom:30px"><div style="position:absolute;left:-20px;top:12px;width:8px;height:8px;background:#b91c1c;border-radius:50%;"></div><div class="f-ant c-red" style="font-size:36px;line-height:1">2025</div><div class="f-mon c-mut" style="font-size:12px;margin-top:4px">500+ Clients &middot; Hassan & Bengaluru</div></div>
+      <div class="he" style="position:relative;margin-bottom:30px"><div style="position:absolute;left:-20px;top:12px;width:8px;height:8px;background:#b91c1c;border-radius:50%;"></div><div class="f-ant c-red" style="font-size:36px;line-height:1">2025</div><div class="f-mon c-mut" style="font-size:12px;margin-top:4px">500+ Clients &middot; Hassan &amp; Bengaluru</div></div>
     </div>
   </div>
 </section>
 
 <script>
+/* ─── CURSOR ─── */
 const curEl = document.getElementById('cursor');
 let mx=innerWidth/2,my=innerHeight/2,cx=mx,cy=my;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
 (function t(){cx+=(mx-cx)*0.11;cy+=(my-cy)*0.11;
   curEl.style.left=cx+'px';curEl.style.top=cy+'px';requestAnimationFrame(t)})();
 if('ontouchstart' in window)curEl.style.display='none';
+
 let mouseNX=0,mouseNY=0;
 document.addEventListener('mousemove',e=>{ mouseNX=(e.clientX/innerWidth-0.5)*2; mouseNY=(e.clientY/innerHeight-0.5)*2; });
 
+/* ─── SCROLL REVEAL ─── */
 const obs = new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){gsap.fromTo(e.target,{opacity:0,y:40},{opacity:1,y:0,duration:0.8,ease:'power3.out'});obs.unobserve(e.target);}});},{threshold:0.1});
 document.querySelectorAll('.he').forEach(e=>obs.observe(e));
 document.addEventListener('DOMContentLoaded',()=>gsap.set('.he',{opacity:0}));
 
+/* ─── PARALLAX GLOW ON ALL GLASS TITLES ─── */
+document.querySelectorAll('.glass-title[data-glow]').forEach(title => {
+  const glow = title.querySelector('.glow');
+  if (!glow) return;
+  title.addEventListener('mousemove', e => {
+    const r = title.getBoundingClientRect();
+    const x = e.clientX - r.left;
+    const y = e.clientY - r.top;
+    const moveX = (x - r.width  / 2) * 0.35;
+    const moveY = (y - r.height / 2) * 0.35;
+    glow.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+  });
+  title.addEventListener('mouseleave', () => {
+    glow.style.transform = 'translate(-50%, -50%)';
+  });
+});
+
+/* ─── THREE.JS SCENE ─── */
 const canvas=document.getElementById('three-canvas');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight);
 renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x0a0604); scene.fog=new THREE.FogExp2(0x0a0604,0.018);
 const cam=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,0.1,600); cam.position.set(0,120,80); cam.lookAt(0,0,0);
 window.addEventListener('resize',()=>{ cam.aspect=innerWidth/innerHeight; cam.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); });
-
 scene.add(new THREE.AmbientLight(0x1a0c06,0.6));
 const warmKey=new THREE.DirectionalLight(0xe05010,1.1); warmKey.position.set(20,40,20);
 warmKey.castShadow=true; warmKey.shadow.mapSize.set(1024,1024);
 warmKey.shadow.camera.near=1;warmKey.shadow.camera.far=200; warmKey.shadow.camera.left=-80;warmKey.shadow.camera.right=80; warmKey.shadow.camera.top=80;warmKey.shadow.camera.bottom=-80; scene.add(warmKey);
 const redFill=new THREE.DirectionalLight(0xb91c1c,0.5); redFill.position.set(-20,20,-10); scene.add(redFill);
-
 const roadMat=new THREE.MeshLambertMaterial({color:0x1a1208}), paveMat=new THREE.MeshLambertMaterial({color:0x221808}), buildMat=new THREE.MeshLambertMaterial({color:0x120e08}), roofMat=new THREE.MeshLambertMaterial({color:0x0e0b06}), wallMat=new THREE.MeshLambertMaterial({color:0x1a1510});
 function neonEdge(col,op){ return new THREE.LineBasicMaterial({color:col,transparent:true,opacity:op}); }
 const orangeEdge=neonEdge(0xe05018,0.9), dimEdge=neonEdge(0x803010,0.45), goldEdgM=neonEdge(0xc9a84c,0.5);
 function addE(m,g,mat){ const e=new THREE.LineSegments(new THREE.EdgesGeometry(g),mat); m.add(e); }
-
 const groundM=new THREE.Mesh(new THREE.PlaneGeometry(300,300),roadMat); groundM.rotation.x=-Math.PI/2; groundM.position.y=-0.02; groundM.receiveShadow=true; scene.add(groundM);
-
 function makeRoad(w,d,x,z,ry=0){ const g=new THREE.BoxGeometry(w,0.05,d); const m=new THREE.Mesh(g,roadMat); m.position.set(x,0.01,z); m.rotation.y=ry; m.receiveShadow=true; scene.add(m); addE(m,g,dimEdge); }
 makeRoad(280,9,0,0); makeRoad(9,280,0,0); makeRoad(280,9,0,-55); makeRoad(280,9,0,55); makeRoad(9,280,-55,0); makeRoad(9,280,55,0);
-
 function laneDash(x,z,rot=0){ const g=new THREE.BoxGeometry(0.3,0.02,2.2); const m=new THREE.Mesh(g,new THREE.MeshLambertMaterial({color:0x605040})); m.position.set(x,0.04,z); m.rotation.y=rot; scene.add(m); }
 for(let i=-120;i<120;i+=6){ if(Math.abs(i)>6) laneDash(i,0); if(Math.abs(i)>6 && Math.abs(i+55)>6 && Math.abs(i-55)>6) laneDash(0,i,Math.PI/2); }
 for(let i=-120;i<120;i+=6){ if(Math.abs(i)>6){ laneDash(i,-55); laneDash(i,55); } }
-
 function crosswalk(cx,cz,w,horiz=true){ for(let i=-2;i<=2;i++){ const g=new THREE.BoxGeometry(horiz?1.2:w,0.03,horiz?w:1.2); const m=new THREE.Mesh(g,new THREE.MeshLambertMaterial({color:0x504030})); m.position.set(horiz?cx+i*1.8:cx,0.03,horiz?cz:cz+i*1.8); scene.add(m); } }
 crosswalk(-5.5,0,9,false); crosswalk(5.5,0,9,false); crosswalk(0,5.5,9,true); crosswalk(0,-5.5,9,true);
 crosswalk(-5.5,-55,9,false); crosswalk(5.5,-55,9,false); crosswalk(0,-49.5,9,true); crosswalk(0,-60.5,9,true);
 crosswalk(-5.5,55,9,false); crosswalk(5.5,55,9,false); crosswalk(0,60.5,9,true); crosswalk(0,49.5,9,true);
-
 function streetLight(x,z){ const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.1,4.5,6),new THREE.MeshLambertMaterial({color:0x222018})); pole.position.set(x,2.25,z); pole.castShadow=true; scene.add(pole); const arm=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.06,1.0),new THREE.MeshLambertMaterial({color:0x222018})); arm.position.set(x,4.5,z+0.5); scene.add(arm); const head=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.2,0.5),new THREE.MeshLambertMaterial({color:0xffcc60,emissive:0xffaa20,emissiveIntensity:1.2})); head.position.set(x,4.4,z+0.9); scene.add(head); const pl=new THREE.PointLight(0xff9922,1.2,18); pl.position.set(x,4.2,z+0.9); scene.add(pl); }
 [[-5,5],[5,5],[-5,-5],[5,-5],[-5,-50],[5,-50],[-5,50],[5,50]].forEach(([x,z])=>streetLight(x,z));
-
 function billboard(x, z, ry, label1, label2, label3, roofY = 0, legDist = 11, isSpecial = false) {
-
   isSpecial = !!isSpecial;
   const postH = roofY ? 6 : 12, postW = 0.5, boardW = 14, boardH = 7;
   const grp = new THREE.Group();
-
   const cX = roofY ? legDist / 2 : boardW * 0.4;
-
-  // POSTS
   const postMat = new THREE.MeshLambertMaterial({ color: 0x333028 });
-
   const post1 = new THREE.Mesh(new THREE.BoxGeometry(postW, postH, postW), postMat);
   post1.position.set(-cX, -boardH / 2 - postH / 2, 0);
   grp.add(post1);
-
   const post2 = new THREE.Mesh(new THREE.BoxGeometry(postW, postH, postW), postMat);
   post2.position.set(cX, -boardH / 2 - postH / 2, 0);
   grp.add(post2);
-
-  // CANVAS
   const cvs = document.createElement('canvas');
   cvs.width = 1024;
   cvs.height = 600;
-
   const ctx = cvs.getContext('2d');
-
   const texture = new THREE.CanvasTexture(cvs);
   texture.minFilter = THREE.LinearFilter;
   texture.generateMipmaps = false;
-
-  // BOARD
   const board = new THREE.Mesh(
     new THREE.BoxGeometry(boardW, boardH, 0.4),
     new THREE.MeshBasicMaterial({ map: texture })
   );
-
   grp.add(board);
-
-  // STRONGER LIGHT (neon spread)
   const light = new THREE.PointLight(0xff5a1f, 2.5, 40);
   light.position.set(0, 0, 3);
   grp.add(light);
-
-  // POSITION + TILT
   grp.position.set(x, (roofY || 0) + postH + boardH / 2, z);
   grp.rotation.y = ry;
-
   board.rotation.x = -0.08;
   board.rotation.z = (Math.random() - 0.5) * 0.04;
-
   scene.add(grp);
-
   let scrollX = 1024;
-
-function drawFinal() {
-  ctx.clearRect(0, 0, 1024, 600);
-
-  ctx.fillStyle = '#0a0604';
-  ctx.fillRect(0, 0, 1024, 600);
-
-  ctx.textAlign = 'center';
-
-  // BORDER (only glow for special board)
-  if (isSpecial) {
-    ctx.shadowColor = '#ff5a1f';
-    ctx.shadowBlur = 25;
-  }
-
-  ctx.strokeStyle = '#e05018';
-  ctx.lineWidth = 10;
-  ctx.strokeRect(8, 8, 1008, 584);
-  ctx.shadowBlur = 0;
-
-  const buzz = 0.7 + Math.random() * 0.6;
-
-  // ===== TITLE =====
-  if (isSpecial) {
-    ctx.shadowColor = '#ff3c00';
-    ctx.shadowBlur = 20 * buzz;
-    ctx.fillStyle = '#ff5522';
-
-    // 🔥 NEW FONT
-    ctx.font = 'bold 110px Outfit';
-  } else {
-    ctx.fillStyle = '#e05018';
-    ctx.font = 'bold 140px Anton';
-  }
-
-  ctx.fillText(label1, 512, 180);
-
-  if (isSpecial) {
-  ctx.shadowBlur = 10;
-  ctx.fillStyle = '#ffffff';
-
-  const parts = label2.split(' ');
-
-  // Hindi
-  ctx.font = 'bold 70px "Noto Sans Devanagari"';
-  ctx.fillText(parts[0], 350, 340);
-
-  // Kannada
-  ctx.font = 'bold 70px "Noto Sans Kannada"';
-  ctx.fillText(parts[1], 680, 340);
-
-} else {
-  ctx.shadowBlur = 0;
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 90px Barlow Condensed';
-  ctx.fillText(label2, 512, 340);
-}
-  // ===== SCROLL TEXT =====
-  scrollX -= 4;
-  if (scrollX < -1000) scrollX = 1024;
-
-  ctx.shadowColor = '#ff7a2a';
-  ctx.shadowBlur = isSpecial ? 12 : 8;
-
-  ctx.fillStyle = '#ff8844';
-  ctx.font = '40px IBM Plex Mono';
-  ctx.fillText(label3 + "   ◆   " + label3, scrollX, 460);
-
-  ctx.shadowBlur = 0;
-
-  // RAIN
-  for (let i = 0; i < 20; i++) {
-    ctx.fillStyle = 'rgba(255,255,255,0.03)';
-    ctx.fillRect(
-      Math.random() * 1024,
-      Math.random() * 600,
-      2,
-      Math.random() * 80
-    );
-  }
-
-  texture.needsUpdate = true;
-}
-
-grp.userData.update = () => {
-
-  // 🔥 flicker ONLY for Sachin board
-  if (isSpecial) {
-    if (Math.random() > 0.7) {
-      light.intensity = 0.5 + Math.random() * 3;
-    } else {
-      light.intensity = 1.5;
+  function drawFinal() {
+    ctx.clearRect(0, 0, 1024, 600);
+    ctx.fillStyle = '#0a0604';
+    ctx.fillRect(0, 0, 1024, 600);
+    ctx.textAlign = 'center';
+    if (isSpecial) {
+      ctx.shadowColor = '#ff5a1f';
+      ctx.shadowBlur = 25;
     }
-  } else {
-    light.intensity = 1.2; // stable
+    ctx.strokeStyle = '#e05018';
+    ctx.lineWidth = 10;
+    ctx.strokeRect(8, 8, 1008, 584);
+    ctx.shadowBlur = 0;
+    const buzz = 0.7 + Math.random() * 0.6;
+    if (isSpecial) {
+      ctx.shadowColor = '#ff3c00';
+      ctx.shadowBlur = 20 * buzz;
+      ctx.fillStyle = '#ff5522';
+      ctx.font = 'bold 110px Outfit';
+    } else {
+      ctx.fillStyle = '#e05018';
+      ctx.font = 'bold 140px Anton';
+    }
+    ctx.fillText(label1, 512, 180);
+    if (isSpecial) {
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = '#ffffff';
+      const parts = label2.split(' ');
+      ctx.font = 'bold 70px "Noto Sans Devanagari"';
+      ctx.fillText(parts[0], 350, 340);
+      ctx.font = 'bold 70px "Noto Sans Kannada"';
+      ctx.fillText(parts[1], 680, 340);
+    } else {
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 90px Barlow Condensed';
+      ctx.fillText(label2, 512, 340);
+    }
+    scrollX -= 4;
+    if (scrollX < -1000) scrollX = 1024;
+    ctx.shadowColor = '#ff7a2a';
+    ctx.shadowBlur = isSpecial ? 12 : 8;
+    ctx.fillStyle = '#ff8844';
+    ctx.font = '40px IBM Plex Mono';
+    ctx.fillText(label3 + "   ◆   " + label3, scrollX, 460);
+    ctx.shadowBlur = 0;
+    for (let i = 0; i < 20; i++) {
+      ctx.fillStyle = 'rgba(255,255,255,0.03)';
+      ctx.fillRect(Math.random() * 1024, Math.random() * 600, 2, Math.random() * 80);
+    }
+    texture.needsUpdate = true;
   }
-
-  drawFinal();
-};
+  grp.userData.update = () => {
+    if (isSpecial) {
+      if (Math.random() > 0.7) { light.intensity = 0.5 + Math.random() * 3; }
+      else { light.intensity = 1.5; }
+    } else {
+      light.intensity = 1.2;
+    }
+    drawFinal();
+  };
 }
-  /* 2. FULL CITY GENERATION, RESTORED */
 function makeBuilding(x,z,floors,bw,bd,type){
   const group=new THREE.Group(); const flH=2.6; const totalH=floors*flH;
   if(type==='a'){
@@ -425,26 +547,14 @@ for(let i=-3;i<=3;i++){
   makeBuilding(-72, i*18-4, 3+Math.floor(Math.random()*3), 5.5, 6+Math.random(), 'a');
   makeBuilding(72, i*18-4, 3+Math.floor(Math.random()*3), 5.5, 6+Math.random(), 'o');
 }
-
 billboard(0, -25, 0, "RSM", "SECURITY", "SERVICES");
 billboard(-45, 0, Math.PI / 2, "24/7", "PROTECTION", "GUARANTEED");
 billboard(45, 0, -Math.PI / 2, "TRUST", "DISCIPLINE", "SAFETY");
-  billboard(
-  25,
-  20,
-  0,
-  "SACHIN STREET",
-  "सचिन ಸ್ಟ್ರೀಟ್",
-  "WELCOME TO SACHIN STREET",
-  10.4,
-  10,
-  true
-);
+billboard(25, 20, 0, "SACHIN STREET", "सचिन ಸ್ಟ್ರೀಟ್", "WELCOME TO SACHIN STREET", 10.4, 10, true);
 const PC=800; const pPos=new Float32Array(PC*3); const pSpeed=new Float32Array(PC);
 for(let i=0;i<PC;i++){ pPos[i*3]=(Math.random()-0.5)*140; pPos[i*3+1]=Math.random()*30; pPos[i*3+2]=(Math.random()-0.5)*140; pSpeed[i]=0.005+Math.random()*0.012; }
 const pGeo=new THREE.BufferGeometry(); pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
 scene.add(new THREE.Points(pGeo,new THREE.PointsMaterial({color:0xff9922,size:0.12,transparent:true,opacity:0.4})));
-
 const camGroup=new THREE.Group(); const metalMat=new THREE.MeshLambertMaterial({color:0x1c1a14});
 const bodyM=new THREE.Mesh(new THREE.CylinderGeometry(1.0,1.3,3.0,10),metalMat); bodyM.rotation.z=Math.PI/2; camGroup.add(bodyM); addE(bodyM,bodyM.geometry,orangeEdge);
 const lensM=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.75,1.2,16), new THREE.MeshLambertMaterial({color:0xb91c1c,emissive:0xb91c1c,emissiveIntensity:1.0,transparent:true,opacity:0.95})); lensM.rotation.z=Math.PI/2; lensM.position.set(2.1,0,0); camGroup.add(lensM);
@@ -452,9 +562,7 @@ const armM=new THREE.Mesh(new THREE.BoxGeometry(0.25,2.6,0.25),metalMat); armM.p
 const plateM=new THREE.Mesh(new THREE.BoxGeometry(1.5,0.25,1.5),metalMat); plateM.position.set(0,3.5,0); camGroup.add(plateM);
 const lensLight=new THREE.PointLight(0xc0392b,0,28); lensLight.position.set(3,0,0); camGroup.add(lensLight);
 camGroup.position.set(0,100,0); scene.add(camGroup);
-
 const scanPlane=new THREE.Mesh(new THREE.PlaneGeometry(220,1.5), new THREE.MeshBasicMaterial({color:0xdd2200,transparent:true,opacity:0.25,side:THREE.DoubleSide})); scanPlane.rotation.x=-Math.PI/2; scanPlane.position.set(0,0.5,-110); scanPlane.visible=false; scene.add(scanPlane);
-
 const TL=gsap.timeline({delay:0.2});
 TL.to(cam.position,{x:0, y:42, z:58, duration:2.0, ease:'power2.inOut', onUpdate:()=>cam.lookAt(0,0,0)},0);
 TL.to(scene.fog,{density:0.008,duration:2.0,ease:'power2.inOut'},0);
@@ -469,7 +577,6 @@ TL.to('#hud',{opacity:1,duration:0.2},6.6);
 TL.to('nav', {opacity:1,duration:0.5,ease:'power2.out'},7.5);
 ['.brow','.h1a','.h1b','.h1c','.tag','.sbt','.ctr'].forEach((s,i)=>{ TL.fromTo(s,{opacity:0,y:20},{opacity:1,y:0,duration:0.74,ease:'power3.out'},7.6+i*0.1); });
 TL.fromTo('#hrt',{opacity:0,x:26},{opacity:1,x:0,duration:0.55,ease:'power3.out'},7.6);
-
 let clk=0;
 (function loop(){
   requestAnimationFrame(loop);clk+=0.016;
@@ -478,11 +585,7 @@ let clk=0;
   if(camGroup.position.y<60){ camGroup.rotation.y+=0.002; camGroup.position.y=30+Math.sin(clk*0.35)*0.45; }
   scene.rotation.y+=0.00025;
   if(camGroup.position.y<60){ cam.position.x+=(mouseNX*4-cam.position.x)*0.015; cam.lookAt(mouseNX*2,0,mouseNY*2); }
-  scene.traverse(obj => {
-  if (obj.userData.update) {
-    obj.userData.update();
-  }
-});
+  scene.traverse(obj => { if (obj.userData.update) obj.userData.update(); });
   renderer.render(scene,cam);
 })();
 </script>
