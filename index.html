@@ -336,26 +336,220 @@ section{position:relative;z-index:5;background:#0a0604;}
   </div>
 </section>
 
-<section id="abt" style="background:#1a2208;padding:80px;min-height:80vh">
-  <div class="w" style="display:flex;max-width:1400px;margin:0 auto;gap:60px">
-    <div style="flex:0 0 45%">
-      <!-- TIMELINE GLASS TITLE -->
-      <div class="glass-title timeline" data-glow>
+<style>
+/* ─── ABOUT SECTION ─── */
+#abt { background: #111208; padding: 80px 0 0; }
+.abt-inner { max-width: 1400px; margin: 0 auto; padding: 0 80px; display: flex; gap: 60px; }
+.abt-left { flex: 0 0 42%; }
+.abt-right { flex: 1; position: relative; padding-left: 48px; }
+
+/* Timeline — line only spans between dots, not past the last one */
+.timeline-track {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.tl-item {
+  position: relative;
+  padding-left: 36px;
+  padding-bottom: 32px;
+}
+/* Line runs between items, stop before the last */
+.tl-item:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 22px;
+  bottom: -10px;
+  width: 1px;
+  background: linear-gradient(to bottom, rgba(185,28,28,0.5), rgba(185,28,28,0.1));
+}
+/* Dot */
+.tl-item::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 10px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #b91c1c;
+}
+.tl-item:first-child::after {
+  box-shadow: 0 0 12px rgba(185,28,28,.7);
+}
+.tl-item:last-child { padding-bottom: 0; }
+.tl-year {
+  font-family: 'Anton', sans-serif;
+  font-size: 34px;
+  color: #b91c1c;
+  line-height: 1;
+}
+.tl-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: rgba(138,138,122,0.85);
+  margin-top: 3px;
+  letter-spacing: 0.05em;
+}
+
+/* ─── CONTACT STRIP — full bleed below the two columns ─── */
+#abt-contact {
+  margin-top: 60px;
+  background: rgba(185,28,28,0.06);
+  border-top: 1px solid rgba(185,28,28,0.2);
+  border-bottom: 1px solid rgba(185,28,28,0.1);
+  padding: 36px 80px;
+}
+.contact-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1.6fr;
+  gap: 0;
+}
+.contact-cell {
+  padding: 0 40px 0 0;
+  border-right: 1px solid rgba(185,28,28,0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.contact-cell:last-child { border-right: none; padding-right: 0; padding-left: 40px; }
+.contact-cell:first-child { padding-left: 0; }
+.cc-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(200,80,20,0.6);
+}
+.cc-name {
+  font-family: 'Anton', sans-serif;
+  font-size: 26px;
+  letter-spacing: 0.06em;
+  color: #ede8d8;
+  line-height: 1;
+}
+.cc-phone {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 28px;
+  letter-spacing: 0.04em;
+  color: #c9a84c;
+  line-height: 1;
+}
+.cc-phone-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: rgba(180,150,110,0.5);
+  letter-spacing: 0.1em;
+  margin-top: 2px;
+}
+.cc-addr {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  color: rgba(232,228,216,0.75);
+  line-height: 1.55;
+  letter-spacing: 0.02em;
+}
+.cc-icon {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(185,28,28,0.12);
+  border: 1px solid rgba(185,28,28,0.2);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+@media(max-width:900px){
+  .abt-inner{flex-direction:column;padding:0 24px}
+  .contact-grid{grid-template-columns:1fr 1fr;gap:28px}
+  .contact-cell{border-right:none;padding:0 0 24px;border-bottom:1px solid rgba(185,28,28,.15)}
+  .contact-cell:last-child{border-bottom:none;padding-left:0}
+  #abt-contact{padding:32px 24px}
+}
+</style>
+
+<section id="abt">
+  <div class="abt-inner">
+    <!-- LEFT: intro -->
+    <div class="abt-left">
+      <div class="glass-title timeline" data-glow style="margin-bottom:20px">
         <span>EST. 2011 &middot; HASSAN, KARNATAKA</span>
         <div class="glow"></div>
       </div>
-      <h3 class="f-ant c-ow he" style="font-size:52px;line-height:1.1;margin:12px 0 24px">Built on Trust.<br>Deployed with Precision.</h3>
-      <p class="c-ow he" style="font-size:15px;line-height:1.8;margin-bottom:16px;font-family:'Barlow Condensed',sans-serif">RSM Security Services was founded in 2011 with a singular mission — to deliver professional, reliable, and disciplined security and facility management solutions to clients across Karnataka. From industrial premises to residential societies, we guard what matters most.</p>
-      <div class="he f-inter c-ow" style="background:rgba(185,28,28,.08);border:.5px solid rgba(185,28,28,.3);border-radius:8px;padding:16px;margin-top:24px;font-size:13px;display:grid;grid-template-columns:100px 1fr;gap:12px;align-items:center">
-        <div class="c-mut">SP MAHESH</div><div>+91 97317 90907</div><div class="c-mut">OFFICE</div><div>+91 90148 59090</div><div class="c-mut">ADDRESS</div><div>Sampige Road, 1st Floor, Near Women Police Station, Hassan</div>
+      <h3 class="f-ant c-ow he" style="font-size:52px;line-height:1.08;margin:0 0 22px">Built on Trust.<br>Deployed with Precision.</h3>
+      <p class="c-ow he" style="font-size:15px;line-height:1.8;font-family:'Barlow Condensed',sans-serif;color:rgba(232,228,216,0.8)">RSM Security Services was founded in 2011 with a singular mission — to deliver professional, reliable, and disciplined security and facility management solutions to clients across Karnataka. From industrial premises to residential societies, we guard what matters most.</p>
+    </div>
+
+    <!-- RIGHT: timeline (line stops at 2025) -->
+    <div class="abt-right">
+      <div class="timeline-track">
+        <div class="tl-item he">
+          <div class="tl-year">2011</div>
+          <div class="tl-label">RSM Security Founded, Hassan</div>
+        </div>
+        <div class="tl-item he">
+          <div class="tl-year">2015</div>
+          <div class="tl-label">Facility Management Services Added</div>
+        </div>
+        <div class="tl-item he">
+          <div class="tl-year">2019</div>
+          <div class="tl-label">200+ Active Clients Across Karnataka</div>
+        </div>
+        <div class="tl-item he">
+          <div class="tl-year">2025</div>
+          <div class="tl-label">500+ Clients · Hassan &amp; Bengaluru</div>
+        </div>
       </div>
     </div>
-    <div style="flex:0 0 55%;position:relative;padding-left:40px">
-      <div style="position:absolute;left:24px;top:10px;bottom:10px;width:1px;background:rgba(185,28,28,.3)"></div>
-      <div class="he" style="position:relative;margin-bottom:30px"><div style="position:absolute;left:-20px;top:12px;width:8px;height:8px;background:#b91c1c;border-radius:50%;box-shadow:0 0 10px rgba(185,28,28,.6)"></div><div class="f-ant c-red" style="font-size:36px;line-height:1">2011</div><div class="f-mon c-mut" style="font-size:12px;margin-top:4px">RSM Security Founded, Hassan</div></div>
-      <div class="he" style="position:relative;margin-bottom:30px"><div style="position:absolute;left:-20px;top:12px;width:8px;height:8px;background:#b91c1c;border-radius:50%;"></div><div class="f-ant c-red" style="font-size:36px;line-height:1">2015</div><div class="f-mon c-mut" style="font-size:12px;margin-top:4px">Facility Management Services Added</div></div>
-      <div class="he" style="position:relative;margin-bottom:30px"><div style="position:absolute;left:-20px;top:12px;width:8px;height:8px;background:#b91c1c;border-radius:50%;"></div><div class="f-ant c-red" style="font-size:36px;line-height:1">2019</div><div class="f-mon c-mut" style="font-size:12px;margin-top:4px">200+ Active Clients Across Karnataka</div></div>
-      <div class="he" style="position:relative;margin-bottom:30px"><div style="position:absolute;left:-20px;top:12px;width:8px;height:8px;background:#b91c1c;border-radius:50%;"></div><div class="f-ant c-red" style="font-size:36px;line-height:1">2025</div><div class="f-mon c-mut" style="font-size:12px;margin-top:4px">500+ Clients &middot; Hassan &amp; Bengaluru</div></div>
+  </div>
+
+  <!-- FULL-WIDTH CONTACT STRIP -->
+  <div id="abt-contact">
+    <div class="contact-grid">
+
+      <!-- Cell 1: Contact Person -->
+      <div class="contact-cell">
+        <div class="cc-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="cc-label">Contact Person</div>
+        <div class="cc-name">SP MAHESH</div>
+        <div class="cc-phone-sub">Director, RSM Security Services</div>
+      </div>
+
+      <!-- Cell 2: Mobile -->
+      <div class="contact-cell">
+        <div class="cc-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+        </div>
+        <div class="cc-label">Mobile</div>
+        <div class="cc-phone">+91 97317 90907</div>
+        <div class="cc-phone-sub">SP Mahesh · Direct Line</div>
+      </div>
+
+      <!-- Cell 3: Office -->
+      <div class="contact-cell">
+        <div class="cc-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.9 14a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.82 3h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 5.99 6l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div class="cc-label">Office</div>
+        <div class="cc-phone">+91 90148 59090</div>
+        <div class="cc-phone-sub">RSM Office Line</div>
+      </div>
+
+      <!-- Cell 4: Address -->
+      <div class="contact-cell">
+        <div class="cc-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="cc-label">Address</div>
+        <div class="cc-addr">Sampige Road, 1st Floor<br>Near Women Police Station<br>Hassan, Karnataka</div>
+      </div>
+
     </div>
   </div>
 </section>
