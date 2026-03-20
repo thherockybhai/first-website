@@ -292,7 +292,8 @@ function billboard(x, z, ry, label1, label2, label3, roofY = 0, legDist = 11) {
   // ===== DRAW FINAL =====
   function drawFinal() {
     ctx.clearRect(0, 0, cvs.width, cvs.height);
-
+    // Middle text (Hindi + Kannada)
+    ctx.fillStyle = '#ffffff'; // instead of gold
     // Background
     ctx.fillStyle = '#0a0604';
     ctx.fillRect(0, 0, 1024, 600);
@@ -314,9 +315,9 @@ function billboard(x, z, ry, label1, label2, label3, roofY = 0, legDist = 11) {
     ctx.fillText(label1, 512, 180);
 
     ctx.fillStyle = '#c9a84c';
-    ctx.font = 'bold 90px "Barlow Condensed"';
+    ctx.font = 'bold 90px Barlow Condensed';
     ctx.fillText(label2, 512, 340);
-
+    
     ctx.fillStyle = 'rgba(200,80,20,0.7)';
     ctx.font = '40px "IBM Plex Mono"';
     ctx.fillText(label3, 512, 460);
@@ -404,6 +405,16 @@ for(let i=-3;i<=3;i++){
 billboard(0, -25, 0, "RSM", "SECURITY", "SERVICES");
 billboard(-45, 0, Math.PI / 2, "24/7", "PROTECTION", "GUARANTEED");
 billboard(45, 0, -Math.PI / 2, "TRUST", "DISCIPLINE", "SAFETY");
+  billboard(
+  25,
+  20,
+  0,
+  "SACHIN STREET",
+  "सचिन ಸ್ಟ್ರೀಟ್",
+  "WELCOME TO SACHIN STREET",
+  10.4,
+  10
+);
 const PC=800; const pPos=new Float32Array(PC*3); const pSpeed=new Float32Array(PC);
 for(let i=0;i<PC;i++){ pPos[i*3]=(Math.random()-0.5)*140; pPos[i*3+1]=Math.random()*30; pPos[i*3+2]=(Math.random()-0.5)*140; pSpeed[i]=0.005+Math.random()*0.012; }
 const pGeo=new THREE.BufferGeometry(); pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
