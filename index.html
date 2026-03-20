@@ -289,42 +289,59 @@ function billboard(x, z, ry, label1, label2, label3, roofY = 0, legDist = 11) {
 
   scene.add(grp);
 
-  // ===== DRAW FINAL =====
-  function drawFinal() {
-    ctx.clearRect(0, 0, cvs.width, cvs.height);
-    // Middle text (Hindi + Kannada)
-    ctx.fillStyle = '#ffffff'; // instead of gold
-    // Background
-    ctx.fillStyle = '#0a0604';
-    ctx.fillRect(0, 0, 1024, 600);
+ function drawFinal() {
+  ctx.clearRect(0, 0, cvs.width, cvs.height);
 
-    // Borders
-    ctx.strokeStyle = '#e05018';
-    ctx.lineWidth = 10;
-    ctx.strokeRect(8, 8, 1008, 584);
+  // ===== BACKGROUND =====
+  ctx.fillStyle = '#0a0604';
+  ctx.fillRect(0, 0, 1024, 600);
 
-    ctx.strokeStyle = 'rgba(224,80,24,0.3)';
-    ctx.lineWidth = 20;
-    ctx.strokeRect(3, 3, 1018, 594);
+  // ===== OUTER GLOW BORDER =====
+  ctx.shadowColor = '#ff5a1f';
+  ctx.shadowBlur = 30;
 
-    // TEXT
-    ctx.textAlign = 'center';
+  ctx.strokeStyle = '#e05018';
+  ctx.lineWidth = 10;
+  ctx.strokeRect(8, 8, 1008, 584);
 
-    ctx.fillStyle = '#e05018';
-    ctx.font = 'bold 140px Anton';
-    ctx.fillText(label1, 512, 180);
+  ctx.shadowBlur = 0;
 
-    ctx.fillStyle = '#c9a84c';
-    ctx.font = 'bold 90px Barlow Condensed';
-    ctx.fillText(label2, 512, 340);
-    
-    ctx.fillStyle = 'rgba(200,80,20,0.7)';
-    ctx.font = '40px "IBM Plex Mono"';
-    ctx.fillText(label3, 512, 460);
+  ctx.strokeStyle = 'rgba(224,80,24,0.3)';
+  ctx.lineWidth = 20;
+  ctx.strokeRect(3, 3, 1018, 594);
 
-    texture.needsUpdate = true;
-  }
+  ctx.textAlign = 'center';
 
+  // ===== TOP TEXT (MAIN BRAND - STRONG GLOW) =====
+  ctx.shadowColor = '#ff3c00';
+  ctx.shadowBlur = 25;
+
+  ctx.fillStyle = '#e05018';
+  ctx.font = 'bold 140px Anton';
+  ctx.fillText(label1, 512, 180);
+
+  // ===== MIDDLE TEXT (FAULTY TUBE LIGHT EFFECT) =====
+  const flicker = Math.random();
+
+  ctx.shadowColor = '#ffffff';
+  ctx.shadowBlur = flicker > 0.2 ? 18 : 2;   // flicker intensity
+
+  ctx.fillStyle = flicker > 0.15 ? '#ffffff' : '#777777'; // flicker ON/OFF
+  ctx.font = 'bold 90px Barlow Condensed';
+  ctx.fillText(label2, 512, 340);
+
+  // ===== BOTTOM TEXT (DIM NEON) =====
+  ctx.shadowColor = '#ff7a2a';
+  ctx.shadowBlur = 10;
+
+  ctx.fillStyle = 'rgba(255,120,50,0.8)';
+  ctx.font = '40px IBM Plex Mono';
+  ctx.fillText(label3, 512, 460);
+
+  ctx.shadowBlur = 0;
+
+  texture.needsUpdate = true;
+}
   // ===== GLITCH =====
   function glitchReveal() {
     let frames = 15;
