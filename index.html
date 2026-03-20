@@ -28,16 +28,16 @@ nav{position:fixed;top:0;left:0;right:0;height:54px;z-index:995;background:rgba(
 .tki .d{color:rgba(200,80,20,0.7);padding:0 2px}
 @keyframes tk{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 #sec-ov{position:absolute;inset:0;z-index:50;pointer-events:none;background:rgba(0,255,100,0.04);opacity:0}
-#hud{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:60;text-align:center;opacity:0;pointer-events:none;white-space:nowrap}
+#hud{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:60;text-align:center;opacity:0;pointer-events:none;white-space:nowrap;padding:18px 28px}
 .hm{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:clamp(13px,2vw,22px);letter-spacing:0.42em;color:#00ff88;text-transform:uppercase}
 .hl{width:100%;height:1px;background:rgba(0,255,136,0.3);margin:7px 0}
 .hs{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.2em;color:#c9a84c;text-transform:uppercase}
 .hc{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(0,255,136,0.45);letter-spacing:0.12em;margin-bottom:4px}
-.cbr{position:absolute;width:38px;height:38px;z-index:55;opacity:0;pointer-events:none}
-#ctl{top:60px;left:10px;border-top:1.5px solid #00ff88;border-left:1.5px solid #00ff88}
-#ctr{top:60px;right:10px;border-top:1.5px solid #00ff88;border-right:1.5px solid #00ff88}
-#cbl{bottom:34px;left:10px;border-bottom:1.5px solid #00ff88;border-left:1.5px solid #00ff88}
-#cbr{bottom:34px;right:10px;border-bottom:1.5px solid #00ff88;border-right:1.5px solid #00ff88}
+.cbr{position:absolute;width:22px;height:22px;z-index:65;opacity:0;pointer-events:none}
+#ctl{top:-2px;left:-2px;border-top:1.5px solid #00ff88;border-left:1.5px solid #00ff88}
+#ctr{top:-2px;right:-2px;border-top:1.5px solid #00ff88;border-right:1.5px solid #00ff88}
+#cbl{bottom:-2px;left:-2px;border-bottom:1.5px solid #00ff88;border-left:1.5px solid #00ff88}
+#cbr{bottom:-2px;right:-2px;border-bottom:1.5px solid #00ff88;border-right:1.5px solid #00ff88}
 #ho{position:absolute;inset:0;z-index:100;display:flex;align-items:flex-end;justify-content:space-between;padding:0 44px 46px;pointer-events:none}
 #hlft{display:flex;flex-direction:column;max-width:510px}
 .brow{display:flex;align-items:center;gap:9px;margin-bottom:12px;opacity:0}
@@ -265,11 +265,11 @@ section{position:relative;z-index:5;background:#0a0604;}
   <div id="vig"></div>
   <div id="sec-ov"></div>
   <div id="hud">
+    <div class="cbr" id="ctl"></div><div class="cbr" id="ctr"></div><div class="cbr" id="cbl"></div><div class="cbr" id="cbr"></div>
     <div class="hc">LAT 13.0062°N · LON 76.0998°E · KARNATAKA</div><div class="hl"></div>
     <div class="hm">AREA SECURED</div><div class="hl"></div>
     <div class="hs">Protected by RSM Security Services</div>
   </div>
-  <div class="cbr" id="ctl"></div><div class="cbr" id="ctr"></div><div class="cbr" id="cbl"></div><div class="cbr" id="cbr"></div>
   <div id="ho">
     <div id="hlft">
       <div class="brow"><div class="pd"></div><span class="btx">Operational Since 2011 · Hassan &amp; Bengaluru</span></div>
@@ -741,7 +741,7 @@ for(let i=-3;i<=3;i++){
   makeBuilding(-72, i*18-4, 3+Math.floor(Math.random()*3), 5.5, 6+Math.random(), 'a');
   makeBuilding(72, i*18-4, 3+Math.floor(Math.random()*3), 5.5, 6+Math.random(), 'o');
 }
-billboard(0, -25, 0, "RSM", "SECURITY", "SERVICES");
+billboard(0, -62, 0, "RSM", "SECURITY", "SERVICES");
 billboard(-45, 0, Math.PI / 2, "24/7", "PROTECTION", "GUARANTEED");
 billboard(45, 0, -Math.PI / 2, "TRUST", "DISCIPLINE", "SAFETY");
 billboard(25, 20, 0, "SACHIN STREET", "सचिन ಸ್ಟ್ರೀಟ್", "WELCOME TO SACHIN STREET", 10.4, 10, true);
@@ -768,6 +768,8 @@ TL.add(()=>{ gsap.to('#sec-ov',{opacity:1,duration:0.22,onComplete:()=>gsap.to('
 TL.fromTo('#hud',{opacity:0},{opacity:1,duration:0.25,ease:'none'},5.6);
 TL.to('#hud',{opacity:0.55,duration:0.07,yoyo:true,repeat:9,ease:'none'},5.85);
 TL.to('#hud',{opacity:1,duration:0.2},6.6);
+/* fade out HUD + brackets exactly as hero content comes in */
+TL.to(['#hud','#ctl','#ctr','#cbl','#cbr'],{opacity:0,duration:0.5,ease:'power2.in'},7.6);
 TL.to('nav', {opacity:1,duration:0.5,ease:'power2.out'},7.5);
 ['.brow','.h1a','.h1b','.h1c','.tag','.sbt','.ctr'].forEach((s,i)=>{ TL.fromTo(s,{opacity:0,y:20},{opacity:1,y:0,duration:0.74,ease:'power3.out'},7.6+i*0.1); });
 TL.fromTo('#hrt',{opacity:0,x:26},{opacity:1,x:0,duration:0.55,ease:'power3.out'},7.6);
