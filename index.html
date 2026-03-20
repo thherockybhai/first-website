@@ -265,6 +265,8 @@ function billboard(x, z, ry, label1, label2, label3, roofY = 0, legDist = 11) {
   cvs.height = 600;
 
   const ctx = cvs.getContext('2d');
+  let scrollX = 1024;
+  let reflectX = -200;
 
   const texture = new THREE.CanvasTexture(cvs);
   texture.minFilter = THREE.LinearFilter;
@@ -289,59 +291,80 @@ function billboard(x, z, ry, label1, label2, label3, roofY = 0, legDist = 11) {
 
   scene.add(grp);
 
- function drawFinal() {
+function drawFinal() {
   ctx.clearRect(0, 0, cvs.width, cvs.height);
 
-  // ===== BACKGROUND =====
   ctx.fillStyle = '#0a0604';
   ctx.fillRect(0, 0, 1024, 600);
 
-  // ===== OUTER GLOW BORDER =====
-  ctx.shadowColor = '#ff5a1f';
-  ctx.shadowBlur = 30;
+  ctx.textAlign = 'center';
 
+  // ===== BORDER GLOW =====
+  ctx.shadowColor = '#ff5a1f';
+  ctx.shadowBlur = 25;
   ctx.strokeStyle = '#e05018';
   ctx.lineWidth = 10;
   ctx.strokeRect(8, 8, 1008, 584);
 
   ctx.shadowBlur = 0;
 
-  ctx.strokeStyle = 'rgba(224,80,24,0.3)';
-  ctx.lineWidth = 20;
-  ctx.strokeRect(3, 3, 1018, 594);
+  // ===== RANDOM BUZZ INTENSITY =====
+  const buzz = 0.7 + Math.random() * 0.6;
 
-  ctx.textAlign = 'center';
-
-  // ===== TOP TEXT (MAIN BRAND - STRONG GLOW) =====
+  // ===== TOP TEXT =====
   ctx.shadowColor = '#ff3c00';
-  ctx.shadowBlur = 25;
+  ctx.shadowBlur = 20 * buzz;
 
   ctx.fillStyle = '#e05018';
   ctx.font = 'bold 140px Anton';
   ctx.fillText(label1, 512, 180);
 
-  // ===== MIDDLE TEXT (FAULTY TUBE LIGHT EFFECT) =====
-  const flicker = Math.random();
+  // ===== PARTIAL LETTER FLICKER =====
+  const chars = label2.split('');
+  let x = 512 - (chars.length * 22);
 
-  ctx.shadowColor = '#ffffff';
-  ctx.shadowBlur = flicker > 0.2 ? 18 : 2;   // flicker intensity
-
-  ctx.fillStyle = flicker > 0.15 ? '#ffffff' : '#777777'; // flicker ON/OFF
   ctx.font = 'bold 90px Barlow Condensed';
-  ctx.fillText(label2, 512, 340);
 
-  // ===== BOTTOM TEXT (DIM NEON) =====
+  chars.forEach(ch => {
+    const on = Math.random() > 0.2;
+
+    ctx.shadowColor = '#ffffff';
+    ctx.shadowBlur = on ? 18 : 1;
+
+    ctx.fillStyle = on ? '#ffffff' : '#444';
+    ctx.fillText(ch, x, 340);
+
+    x += 44;
+  });
+
+  // ===== SCROLLING TEXT =====
+  scrollX -= 4;
+  if (scrollX < -1000) scrollX = 1024;
+
   ctx.shadowColor = '#ff7a2a';
-  ctx.shadowBlur = 10;
+  ctx.shadowBlur = 8;
 
-  ctx.fillStyle = 'rgba(255,120,50,0.8)';
+  ctx.fillStyle = '#ff8844';
   ctx.font = '40px IBM Plex Mono';
-  ctx.fillText(label3, 512, 460);
+  ctx.fillText(label3 + "   ◆   " + label3, scrollX, 460);
 
   ctx.shadowBlur = 0;
 
+  // ===== RAIN REFLECTION SWEEP =====
+  const grad = ctx.createLinearGradient(0, 0, 1024, 600);
+  grad.addColorStop(0, 'transparent');
+  grad.addColorStop(0.5, 'rgba(255,255,255,0.08)');
+  grad.addColorStop(1, 'transparent');
+
+  ctx.fillStyle = grad;
+  ctx.fillRect(reflectX, 0, 200, 600);
+
+  reflectX += 6;
+  if (reflectX > 1200) reflectX = -200;
+
   texture.needsUpdate = true;
 }
+  
   // ===== GLITCH =====
   function glitchReveal() {
     let frames = 15;
