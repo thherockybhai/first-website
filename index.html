@@ -66,6 +66,59 @@ nav{position:fixed;top:0;left:0;right:0;height:54px;z-index:995;background:rgba(
 .f-ant{font-family:'Anton',sans-serif} .f-mon{font-family:'IBM Plex Mono',monospace}
 .c-red{color:#b91c1c} .c-gld{color:#c9a84c} .c-mut{color:#8a8a7a} .c-ow{color:#e8e4d8}
 
+/* Hide all text elements until fonts are loaded */
+.fonts-loading .he,
+.fonts-loading .h1a,
+.fonts-loading .h1b,
+.fonts-loading .h1c,
+.fonts-loading .tag,
+.fonts-loading .sbt,
+.fonts-loading .btn-p,
+.fonts-loading .btn-s,
+.fonts-loading .logo-text,
+.fonts-loading .nl a,
+.fonts-loading .btx,
+.fonts-loading .hm,
+.fonts-loading .hs,
+.fonts-loading .hc,
+.fonts-loading .snum,
+.fonts-loading .slbl,
+.fonts-loading .sft,
+.fonts-loading .c-mut,
+.fonts-loading .c-ow,
+.fonts-loading .c-red,
+.fonts-loading .c-gld {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Show text only when fonts are loaded */
+.fonts-loaded .he,
+.fonts-loaded .h1a,
+.fonts-loaded .h1b,
+.fonts-loaded .h1c,
+.fonts-loaded .tag,
+.fonts-loaded .sbt,
+.fonts-loaded .btn-p,
+.fonts-loaded .btn-s,
+.fonts-loaded .logo-text,
+.fonts-loaded .nl a,
+.fonts-loaded .btx,
+.fonts-loaded .hm,
+.fonts-loaded .hs,
+.fonts-loaded .hc,
+.fonts-loaded .snum,
+.fonts-loaded .slbl,
+.fonts-loaded .sft,
+.fonts-loaded .c-mut,
+.fonts-loaded .c-ow,
+.fonts-loaded .c-red,
+.fonts-loaded .c-gld {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease;
+}
+
 section{position:relative;z-index:5;background:#0a0604;}
 .he{opacity:0}
 .swrap{display:flex;gap:48px;padding:48px 80px 80px;max-width:1400px;margin:0 auto}
@@ -92,7 +145,7 @@ section{position:relative;z-index:5;background:#0a0604;}
 }
 </style>
 </head>
-<body>
+<body class="fonts-loading">
 <div id="cursor">
   <svg viewBox="0 0 24 24" fill="none">
     <circle cx="12" cy="12" r="10" stroke="#c0392b" stroke-width="0.8"/>
@@ -191,6 +244,23 @@ section{position:relative;z-index:5;background:#0a0604;}
 </section>
 
 <script>
+// Font loading detection
+document.documentElement.classList.add('fonts-loading');
+
+// Check if fonts are loaded
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => {
+    document.documentElement.classList.remove('fonts-loading');
+    document.documentElement.classList.add('fonts-loaded');
+  });
+} else {
+  // Fallback for browsers that don't support document.fonts
+  setTimeout(() => {
+    document.documentElement.classList.remove('fonts-loading');
+    document.documentElement.classList.add('fonts-loaded');
+  }, 1000);
+}
+
 const curEl = document.getElementById('cursor');
 let mx=innerWidth/2,my=innerHeight/2,cx=mx,cy=my;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
@@ -369,8 +439,13 @@ function billboard(x, z, ry, label1, label2, label3, roofY = 0, legDist = 11) {
     setTimeout(glitchReveal, 500);
   }
 }
+
+// Add billboards to the scene
+billboard(0, -25, 0, "RSM", "SECURITY", "SERVICES");
+billboard(-45, 0, Math.PI / 2, "24/7", "PROTECTION", "GUARANTEED");
+billboard(45, 0, -Math.PI / 2, "TRUST", "DISCIPLINE", "SAFETY");
   
-  /* 2. FULL CITY GENERATION, RESTORED */
+/* 2. FULL CITY GENERATION, RESTORED */
 function makeBuilding(x,z,floors,bw,bd,type){
   const group=new THREE.Group(); const flH=2.6; const totalH=floors*flH;
   if(type==='a'){
@@ -401,9 +476,6 @@ for(let i=-3;i<=3;i++){
   makeBuilding(72, i*18-4, 3+Math.floor(Math.random()*3), 5.5, 6+Math.random(), 'o');
 }
 
-billboard(0, -25, 0, "RSM", "SECURITY", "SERVICES");
-billboard(-45, 0, Math.PI / 2, "24/7", "PROTECTION", "GUARANTEED");
-billboard(45, 0, -Math.PI / 2, "TRUST", "DISCIPLINE", "SAFETY");
 const PC=800; const pPos=new Float32Array(PC*3); const pSpeed=new Float32Array(PC);
 for(let i=0;i<PC;i++){ pPos[i*3]=(Math.random()-0.5)*140; pPos[i*3+1]=Math.random()*30; pPos[i*3+2]=(Math.random()-0.5)*140; pSpeed[i]=0.005+Math.random()*0.012; }
 const pGeo=new THREE.BufferGeometry(); pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
