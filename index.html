@@ -4,29 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RSM Security Services</title>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@400;600;700&family=IBM+Plex+Mono:wght@400;700&family=Outfit:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@400;600;700&family=IBM+Plex+Mono:wght@400;700&family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@700&family=Noto+Sans+Kannada:wght@700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;background:#0a0604;overflow-x:hidden;cursor:none}
+html,body{width:100%;background:#0a0604;overflow-x:hidden;cursor:none}
+/* FIX 7: don't set overflow on html/body — use overflow-x only, avoid cursor clip */
+
 #cursor{position:fixed;width:24px;height:24px;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
 #scanlines{position:fixed;inset:0;pointer-events:none;z-index:997;background:repeating-linear-gradient(to bottom,transparent 0,transparent 3px,rgba(180,60,10,0.03) 3px,rgba(180,60,10,0.03) 4px)}
+
 nav{position:fixed;top:0;left:0;right:0;height:54px;z-index:995;background:rgba(10,6,4,0.88);backdrop-filter:blur(14px);border-bottom:0.5px solid rgba(200,80,20,0.3);display:flex;align-items:center;justify-content:space-between;padding:0 40px;opacity:0}
 .logo-text{font-family:'Anton',sans-serif;font-size:22px;color:#c0392b;letter-spacing:0.05em}
 .logo-text span{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:10px;color:rgba(232,220,200,0.5);display:block;letter-spacing:0.2em;margin-top:-3px}
 .nl{display:flex;gap:28px}
 .nl a{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;letter-spacing:0.13em;color:rgba(180,150,120,0.7);text-transform:uppercase;text-decoration:none;cursor:none;transition:color 0.2s}
-.nl a:hover,.hov:hover{color:#e05020}
+.nl a:hover{color:#e05020}
+
 #hero{position:relative;width:100%;height:100vh;background:#0a0604;overflow:hidden}
 #three-canvas{position:absolute;inset:0;width:100%;height:100%}
 #vig{position:absolute;inset:0;pointer-events:none;z-index:10;background:radial-gradient(ellipse at 50% 50%,transparent 28%,rgba(8,5,3,0.94) 100%)}
+
 .tk{position:relative;height:30px;background:rgba(10,6,4,0.95);border-top:0.5px solid rgba(200,80,20,0.25);border-bottom:0.5px solid rgba(200,80,20,0.25);z-index:200;display:flex;align-items:center;overflow:hidden}
-.tki{display:flex;align-items:center;animation:tk 38s linear infinite;white-space:nowrap}
+.tki{display:flex;align-items:center;animation:tkroll 38s linear infinite;white-space:nowrap}
 .tki span{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;color:rgba(180,140,100,0.85);text-transform:uppercase;padding:0 10px}
 .tki .d{color:rgba(200,80,20,0.7);padding:0 2px}
-@keyframes tk{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes tkroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
 #sec-ov{position:absolute;inset:0;z-index:50;pointer-events:none;background:rgba(0,255,100,0.04);opacity:0}
 #hud{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:60;text-align:center;opacity:0;pointer-events:none;white-space:nowrap;padding:18px 28px}
 .hm{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:clamp(13px,2vw,22px);letter-spacing:0.42em;color:#00ff88;text-transform:uppercase}
@@ -37,24 +43,26 @@ nav{position:fixed;top:0;left:0;right:0;height:54px;z-index:995;background:rgba(
 #ctl{top:-2px;left:-2px;border-top:1.5px solid #00ff88;border-left:1.5px solid #00ff88}
 #ctr{top:-2px;right:-2px;border-top:1.5px solid #00ff88;border-right:1.5px solid #00ff88}
 #cbl{bottom:-2px;left:-2px;border-bottom:1.5px solid #00ff88;border-left:1.5px solid #00ff88}
-#cbr{bottom:-2px;right:-2px;border-bottom:1.5px solid #00ff88;border-right:1.5px solid #00ff88}
+#cbr2{bottom:-2px;right:-2px;border-bottom:1.5px solid #00ff88;border-right:1.5px solid #00ff88}
+
+/* FIX 1 — mobile hero: starts below nav, stacks top-down */
 #ho{position:absolute;inset:0;z-index:100;display:flex;align-items:flex-end;justify-content:space-between;padding:0 44px 46px;pointer-events:none}
 #hlft{display:flex;flex-direction:column;max-width:510px}
 .brow{display:flex;align-items:center;gap:9px;margin-bottom:12px;opacity:0}
-.pd{width:7px;height:7px;border-radius:50%;background:#c0392b;flex-shrink:0;animation:pd 1.6s ease-in-out infinite}
-@keyframes pd{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(192,57,43,0.5)}50%{opacity:0.3;box-shadow:0 0 0 6px rgba(192,57,43,0)}}
+.pd{width:7px;height:7px;border-radius:50%;background:#c0392b;flex-shrink:0;animation:pdpulse 1.6s ease-in-out infinite}
+@keyframes pdpulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(192,57,43,0.5)}50%{opacity:0.3;box-shadow:0 0 0 6px rgba(192,57,43,0)}}
 .btx{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.17em;color:rgba(180,150,110,0.8);text-transform:uppercase}
 .h1a{font-family:'Anton',sans-serif;font-size:clamp(60px,9.2vw,112px);line-height:0.86;color:#ede8d8;display:block;opacity:0}
 .h1b{font-family:'Anton',sans-serif;font-size:clamp(60px,9.2vw,112px);line-height:0.86;color:transparent;-webkit-text-stroke:1.5px #c0392b;display:block;opacity:0}
 .h1c{font-family:'Anton',sans-serif;font-size:clamp(42px,6.2vw,76px);line-height:0.95;color:#c9a84c;display:block;opacity:0;margin-bottom:14px}
 .tag{font-family:'Outfit',sans-serif;font-weight:500;font-size:clamp(13px,1.6vw,18px);letter-spacing:0.35em;color:#ede8d8;text-transform:uppercase;opacity:0;margin-bottom:5px}
-.f-outfit{font-family:'Outfit',sans-serif} .f-inter{font-family:'Inter',sans-serif}
 .sbt{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(180,150,110,0.75);letter-spacing:0.1em;text-transform:uppercase;opacity:0;margin-bottom:22px}
-.ctr{display:flex;gap:12px;opacity:0;pointer-events:all}
-.btn-p{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#ede8d8;background:#c0392b;border:none;padding:12px 28px;border-radius:1px;cursor:none;transition:all 0.22s;text-decoration:none}
+.ctr2{display:flex;gap:12px;opacity:0;pointer-events:all}
+.btn-p{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#ede8d8;background:#c0392b;border:none;padding:12px 28px;border-radius:1px;cursor:none;transition:all 0.22s;text-decoration:none;display:inline-block}
 .btn-p:hover{background:#8B1C1C;transform:scale(1.04);box-shadow:0 0 18px rgba(192,57,43,0.5)}
-.btn-s{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#c9a84c;background:transparent;border:1px solid #c9a84c;padding:12px 28px;border-radius:1px;cursor:none;transition:all 0.22s;text-decoration:none}
+.btn-s{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#c9a84c;background:transparent;border:1px solid #c9a84c;padding:12px 28px;border-radius:1px;cursor:none;transition:all 0.22s;text-decoration:none;display:inline-block}
 .btn-s:hover{background:rgba(201,168,76,0.1);transform:scale(1.04)}
+
 #hrt{opacity:0;pointer-events:all}
 .sc{background:rgba(10,6,4,0.82);backdrop-filter:blur(18px);border:0.5px solid rgba(200,80,20,0.4);border-radius:10px;padding:22px 28px}
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:18px 24px}
@@ -63,183 +71,161 @@ nav{position:fixed;top:0;left:0;right:0;height:54px;z-index:995;background:rgba(
 .slbl{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(180,150,110,0.75);letter-spacing:0.13em;text-transform:uppercase}
 .sdv{grid-column:1/-1;height:0.5px;background:rgba(200,80,20,0.2)}
 .sft{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(200,80,20,0.5);letter-spacing:0.1em;text-align:center;margin-top:10px;text-transform:uppercase}
-.f-ant{font-family:'Anton',sans-serif} .f-mon{font-family:'IBM Plex Mono',monospace}
-.c-red{color:#b91c1c} .c-gld{color:#c9a84c} .c-mut{color:#8a8a7a} .c-ow{color:#e8e4d8}
-section{position:relative;z-index:5;background:#0a0604;}
+
+/* ── SHARED SECTION STYLES ── */
+section{position:relative;z-index:5;background:#0a0604}
 .he{opacity:0}
-.swrap{display:flex;gap:48px;padding:48px 80px 80px;max-width:1400px;margin:0 auto}
+.sec-pad{padding:80px 0}
+.sec-inner{max-width:1400px;margin:0 auto;padding:0 80px}
+.sec-head{text-align:center;margin-bottom:48px}
+.f-ant{font-family:'Anton',sans-serif}
+.f-mon{font-family:'IBM Plex Mono',monospace}
+.f-bc{font-family:'Barlow Condensed',sans-serif}
+.c-red{color:#b91c1c}.c-gld{color:#c9a84c}.c-mut{color:#8a8a7a}.c-ow{color:#e8e4d8}
+.red-bar{width:64px;height:2px;background:#b91c1c;margin:16px auto 0}
+
+/* ── GLASS TITLE ── */
+.glass-title{position:relative;display:inline-block;margin-bottom:28px;padding:12px 28px;border-radius:10px;overflow:hidden;cursor:none;transition:transform 0.3s ease,box-shadow 0.3s ease}
+.glass-title.red{background:rgba(185,28,28,0.08);backdrop-filter:blur(12px);border:1px solid rgba(185,28,28,0.25);box-shadow:0 0 12px rgba(185,28,28,0.2),inset 0 0 10px rgba(185,28,28,0.1)}
+.glass-title.red span{background:linear-gradient(90deg,#ff4d2d,#c9a84c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-family:'Outfit','Anton',sans-serif;font-weight:700;font-size:24px;letter-spacing:0.18em;text-transform:uppercase}
+.glass-title.red:hover{transform:translateY(-4px) scale(1.05);box-shadow:0 0 30px rgba(255,80,20,0.55),inset 0 0 18px rgba(255,80,20,0.2)}
+.glass-title.red::after{background:linear-gradient(to right,rgba(255,80,20,0.9),transparent)}
+.glass-title.red .glow{background:radial-gradient(circle,rgba(255,80,20,0.38),transparent 62%)}
+.glass-title.gold{background:rgba(201,168,76,0.07);backdrop-filter:blur(12px);border:1px solid rgba(201,168,76,0.22);box-shadow:0 0 12px rgba(201,168,76,0.18),inset 0 0 10px rgba(201,168,76,0.1)}
+.glass-title.gold span{background:linear-gradient(90deg,#c9a84c,#f5d87a,#c9a84c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-family:'Outfit','Anton',sans-serif;font-weight:700;font-size:24px;letter-spacing:0.18em;text-transform:uppercase}
+.glass-title.gold:hover{transform:translateY(-4px) scale(1.05);box-shadow:0 0 30px rgba(201,168,76,0.5),inset 0 0 18px rgba(201,168,76,0.18)}
+.glass-title.gold::after{background:linear-gradient(to right,rgba(201,168,76,0.9),transparent)}
+.glass-title.gold .glow{background:radial-gradient(circle,rgba(201,168,76,0.38),transparent 62%)}
+.glass-title.section-hd{background:rgba(200,80,20,0.06);backdrop-filter:blur(12px);border:1px solid rgba(200,80,20,0.18);box-shadow:0 0 14px rgba(200,80,20,0.15),inset 0 0 10px rgba(200,80,20,0.08);padding:6px 20px}
+.glass-title.section-hd span{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.2em;background:linear-gradient(90deg,#c9a84c,#e08040);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.glass-title.section-hd:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 0 22px rgba(200,80,20,0.4),inset 0 0 14px rgba(200,80,20,0.15)}
+.glass-title.section-hd::after{background:linear-gradient(to right,rgba(200,80,20,0.8),transparent)}
+.glass-title.section-hd .glow{background:radial-gradient(circle,rgba(200,80,20,0.32),transparent 62%)}
+.glass-title.timeline-v{background:rgba(185,28,28,0.06);backdrop-filter:blur(10px);border:1px solid rgba(185,28,28,0.2);box-shadow:0 0 10px rgba(185,28,28,0.15),inset 0 0 8px rgba(185,28,28,0.08);padding:6px 18px}
+.glass-title.timeline-v span{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.2em;background:linear-gradient(90deg,#8a8a7a,#c9a84c);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.glass-title.timeline-v:hover{transform:translateY(-3px) scale(1.04)}
+.glass-title.timeline-v::after{background:linear-gradient(to right,rgba(185,28,28,0.8),transparent)}
+.glass-title.timeline-v .glow{background:radial-gradient(circle,rgba(185,28,28,0.32),transparent 62%)}
+.glass-title::after{content:"";position:absolute;top:50%;right:-60px;width:90px;height:2px;transform:translateY(-50%);opacity:0.7;animation:tailFlow 2s linear infinite}
+@keyframes tailFlow{0%{right:-90px;opacity:0}50%{opacity:1}100%{right:-20px;opacity:0}}
+.glow{position:absolute;width:180px;height:180px;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;transition:transform 0.08s ease;opacity:0.8;border-radius:50%}
+
+/* ── SERVICES ── */
+.swrap{display:flex;gap:48px;padding:0 80px 80px;max-width:1400px;margin:0 auto}
 .scol{flex:1}
 .scard{background:#141610;border-left:3px solid;border-radius:6px;padding:18px 22px;margin-bottom:10px;display:flex;align-items:center;gap:16px;transition:all .15s}
-.sc-r{border-left-color:rgba(185,28,28,.5)} .sc-g{border-left-color:rgba(201,168,76,.5)}
+.sc-r{border-left-color:rgba(185,28,28,.5)}.sc-g{border-left-color:rgba(201,168,76,.5)}
 .scard:hover{background:#1a1c17;transform:translateY(-3px)}
-.sc-r:hover{border-left-color:#b91c1c} .sc-g:hover{border-left-color:#c9a84c}
-.sci{width:36px;height:36px;display:flex;justify-content:center;align-items:center}
-.wgrd{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:40px 80px;max-width:1400px;margin:0 auto}
+.sc-r:hover{border-left-color:#b91c1c}.sc-g:hover{border-left-color:#c9a84c}
+.sci{width:36px;height:36px;display:flex;justify-content:center;align-items:center;flex-shrink:0}
+
+/* ── ABOUT ── */
+#abt{background:#111208}
+.abt-inner{display:flex;gap:60px;padding:0 80px}
+.abt-left{flex:0 0 42%}
+.abt-right{flex:1;padding-left:48px}
+.tl-track{position:relative;display:flex;flex-direction:column}
+.tl-item{position:relative;padding-left:36px;padding-bottom:32px}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:7px;top:22px;bottom:-10px;width:1px;background:linear-gradient(to bottom,rgba(185,28,28,0.5),rgba(185,28,28,0.1))}
+.tl-item::after{content:'';position:absolute;left:3px;top:10px;width:9px;height:9px;border-radius:50%;background:#b91c1c}
+.tl-item:first-child::after{box-shadow:0 0 12px rgba(185,28,28,.7)}
+.tl-item:last-child{padding-bottom:0}
+.tl-year{font-family:'Anton',sans-serif;font-size:34px;color:#b91c1c;line-height:1}
+.tl-lbl{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(138,138,122,0.85);margin-top:3px;letter-spacing:0.05em}
+
+/* Contact strip */
+#abt-contact{margin-top:60px;background:rgba(185,28,28,0.06);border-top:1px solid rgba(185,28,28,0.2);border-bottom:1px solid rgba(185,28,28,0.1);padding:36px 80px}
+.contact-grid{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr 1.6fr;gap:0}
+.contact-cell{padding:0 40px 0 0;border-right:1px solid rgba(185,28,28,0.15);display:flex;flex-direction:column;gap:6px}
+.contact-cell:last-child{border-right:none;padding-right:0;padding-left:40px}
+.contact-cell:first-child{padding-left:0}
+.cc-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(200,80,20,0.6)}
+.cc-name{font-family:'Anton',sans-serif;font-size:26px;letter-spacing:0.06em;color:#ede8d8;line-height:1}
+.cc-phone{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:28px;letter-spacing:0.04em;color:#c9a84c;line-height:1}
+.cc-phone-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(180,150,110,0.5);letter-spacing:0.1em;margin-top:2px}
+.cc-addr{font-family:'Barlow Condensed',sans-serif;font-size:15px;color:rgba(232,228,216,0.75);line-height:1.55}
+.cc-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:rgba(185,28,28,0.12);border:1px solid rgba(185,28,28,0.2);border-radius:6px;margin-bottom:8px}
+
+/* ── WHY US ── */
+#why{background:#0d0e14}
+.wgrd{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:0 80px 80px;max-width:1400px;margin:0 auto}
 .wcd{background:#141610;border-top:2px solid #b91c1c;border-radius:8px;padding:28px;transition:0.3s}
 .wcd:hover{background:rgba(185,28,28,.08);border-top-color:#ff3333;box-shadow:0 4px 24px rgba(185,28,28,.2)}
-.tcon{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding:40px 80px;gap:20px;scrollbar-width:none}
+.wcd-icon{font-size:32px;margin-bottom:12px}
+.wcd-title{font-family:'Anton',sans-serif;font-size:22px;color:#e8e4d8;margin-bottom:8px;letter-spacing:0.04em}
+.wcd-text{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8a8a7a;line-height:1.7}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;max-width:1400px;margin:0 auto;padding:0 80px 80px;border-top:0.5px solid rgba(185,28,28,0.15)}
+.stat-cell{padding:32px 0;text-align:center;border-right:0.5px solid rgba(185,28,28,0.12)}
+.stat-cell:last-child{border-right:none}
+.stat-n{font-family:'Anton',sans-serif;font-size:64px;color:#c9a84c;line-height:1}
+.stat-l{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a8a7a;letter-spacing:0.15em;text-transform:uppercase;margin-top:4px}
+
+/* ── TESTIMONIALS ── */
+#tst{background:#0a0604}
+.tcon{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 80px 60px;gap:20px;scrollbar-width:none}
+.tcon::-webkit-scrollbar{display:none}
 .tcd{flex:0 0 380px;scroll-snap-align:start;background:rgba(20,22,16,.9);border:0.5px solid rgba(185,28,28,.25);border-radius:16px;padding:32px;position:relative}
+.tcd-quote{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-style:italic;color:rgba(232,228,216,0.85);line-height:1.7;margin-bottom:20px}
+.tcd-stars{color:#c9a84c;font-size:14px;margin-bottom:16px;letter-spacing:2px}
+.tcd-name{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:11px;color:#b91c1c;letter-spacing:0.05em}
+.tcd-role{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8a8a7a;margin-top:3px}
+.tcd-bg-q{position:absolute;top:12px;left:16px;font-family:'Anton',sans-serif;font-size:96px;color:rgba(185,28,28,0.1);line-height:1;pointer-events:none}
 
-/* ===== PREMIUM GLASS TITLE — ALL VARIANTS ===== */
-.glass-title {
-  position: relative;
-  display: inline-block;
-  margin-bottom: 28px;
-  padding: 12px 28px;
-  border-radius: 10px;
-  overflow: hidden;
-  cursor: none;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+/* ── CONTACT ── */
+#cnt{background:#111208}
+.cnt-inner{display:flex;gap:0;max-width:1400px;margin:0 auto;padding:0 80px 80px}
+.cnt-left{flex:1;padding-right:80px;border-right:0.5px solid rgba(185,28,28,0.2)}
+.cnt-right{flex:0 0 420px;padding-left:60px}
+.cnt-title{font-family:'Anton',sans-serif;font-size:clamp(42px,5vw,72px);color:#ede8d8;line-height:0.9;margin-bottom:16px}
+.cnt-title em{color:#b91c1c;font-style:normal}
+.cnt-sub{font-family:'Barlow Condensed',sans-serif;font-size:16px;color:rgba(232,228,216,0.7);line-height:1.7;margin-bottom:32px}
+.cnt-note{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(180,150,110,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-top:16px}
+.cnt-card{background:#141610;border-left:3px solid #b91c1c;border-radius:0 6px 6px 0;padding:16px 20px;margin-bottom:12px}
+.cnt-card.gold{border-left-color:#c9a84c}
+.cnt-card-name{font-family:'Anton',sans-serif;font-size:14px;color:#c9a84c;letter-spacing:0.1em;text-transform:uppercase}
+.cnt-card-num{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:22px;color:#ede8d8;margin-top:2px}
+.cnt-card-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#8a8a7a;margin-top:2px;letter-spacing:0.08em}
+.cnt-addr-box{background:rgba(185,28,28,0.06);border:0.5px solid rgba(185,28,28,0.2);border-radius:8px;padding:20px;margin-top:8px}
+.cnt-addr-txt{font-family:'Barlow Condensed',sans-serif;font-size:15px;color:rgba(232,228,216,0.8);line-height:1.6}
 
-/* RED variant (Security & Facility) */
-.glass-title.red {
-  background: rgba(185, 28, 28, 0.08);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(185, 28, 28, 0.25);
-  box-shadow: 0 0 12px rgba(185, 28, 28, 0.2), inset 0 0 10px rgba(185, 28, 28, 0.1);
-}
-.glass-title.red span {
-  background: linear-gradient(90deg, #ff4d2d, #c9a84c);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.glass-title.red:hover {
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 0 30px rgba(255, 80, 20, 0.55), inset 0 0 18px rgba(255, 80, 20, 0.2);
-}
-.glass-title.red::after {
-  background: linear-gradient(to right, rgba(255, 80, 20, 0.9), transparent);
-}
-.glass-title.red .glow {
-  background: radial-gradient(circle, rgba(255, 80, 20, 0.38), transparent 62%);
-}
+/* footer */
+.site-footer{background:#06040a;border-top:0.5px solid rgba(185,28,28,0.2);padding:20px 80px;display:flex;align-items:center;justify-content:space-between}
+.site-footer p{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(138,138,122,0.6);letter-spacing:0.1em;text-transform:uppercase}
 
-/* GOLD variant (Labour Management) */
-.glass-title.gold {
-  background: rgba(201, 168, 76, 0.07);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(201, 168, 76, 0.22);
-  box-shadow: 0 0 12px rgba(201, 168, 76, 0.18), inset 0 0 10px rgba(201, 168, 76, 0.1);
-}
-.glass-title.gold span {
-  background: linear-gradient(90deg, #c9a84c, #f5d87a, #c9a84c);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.glass-title.gold:hover {
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 0 30px rgba(201, 168, 76, 0.5), inset 0 0 18px rgba(201, 168, 76, 0.18);
-}
-.glass-title.gold::after {
-  background: linear-gradient(to right, rgba(201, 168, 76, 0.9), transparent);
-}
-.glass-title.gold .glow {
-  background: radial-gradient(circle, rgba(201, 168, 76, 0.38), transparent 62%);
-}
-
-/* SECTION HEADER variant (Our Services, About, etc.) */
-.glass-title.section-hd {
-  background: rgba(200, 80, 20, 0.06);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(200, 80, 20, 0.18);
-  box-shadow: 0 0 14px rgba(200, 80, 20, 0.15), inset 0 0 10px rgba(200, 80, 20, 0.08);
-  padding: 6px 20px;
-}
-.glass-title.section-hd span {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  background: linear-gradient(90deg, #c9a84c, #e08040);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.glass-title.section-hd:hover {
-  transform: translateY(-3px) scale(1.04);
-  box-shadow: 0 0 22px rgba(200, 80, 20, 0.4), inset 0 0 14px rgba(200, 80, 20, 0.15);
-}
-.glass-title.section-hd::after {
-  background: linear-gradient(to right, rgba(200, 80, 20, 0.8), transparent);
-}
-.glass-title.section-hd .glow {
-  background: radial-gradient(circle, rgba(200, 80, 20, 0.32), transparent 62%);
-}
-
-/* TIMELINE variant */
-.glass-title.timeline {
-  background: rgba(185, 28, 28, 0.06);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(185, 28, 28, 0.2);
-  box-shadow: 0 0 10px rgba(185, 28, 28, 0.15), inset 0 0 8px rgba(185, 28, 28, 0.08);
-  padding: 6px 18px;
-}
-.glass-title.timeline span {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  background: linear-gradient(90deg, #8a8a7a, #c9a84c);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.glass-title.timeline:hover {
-  transform: translateY(-3px) scale(1.04);
-  box-shadow: 0 0 20px rgba(185, 28, 28, 0.35), inset 0 0 12px rgba(185, 28, 28, 0.12);
-}
-.glass-title.timeline::after {
-  background: linear-gradient(to right, rgba(185, 28, 28, 0.8), transparent);
-}
-.glass-title.timeline .glow {
-  background: radial-gradient(circle, rgba(185, 28, 28, 0.32), transparent 62%);
-}
-
-/* Shared text style for red/gold variants */
-.glass-title.red span,
-.glass-title.gold span {
-  font-family: 'Outfit', 'Anton', sans-serif;
-  font-weight: 700;
-  font-size: 24px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-/* TAIL STREAK — shared */
-.glass-title::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: -60px;
-  width: 90px;
-  height: 2px;
-  transform: translateY(-50%);
-  opacity: 0.7;
-  animation: tailFlow 2s linear infinite;
-}
-@keyframes tailFlow {
-  0%   { right: -90px; opacity: 0; }
-  50%  { opacity: 1; }
-  100% { right: -20px; opacity: 0; }
-}
-
-/* PARALLAX GLOW — shared */
-.glow {
-  position: absolute;
-  width: 180px;
-  height: 180px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  transition: transform 0.08s ease;
-  opacity: 0.8;
-  border-radius: 50%;
-}
-
-@media(max-width:1024px){.swrap,.wgrd,#abt div[style*="max-width:1400px"]{flex-direction:column!important;grid-template-columns:1fr}.wgrd{grid-template-columns:repeat(2,1fr)}#cnt .cr{padding:40px 80px}}
+/* ── RESPONSIVE ── */
 @media(max-width:768px){
-  #ho{flex-direction:column;align-items:flex-start;padding:0 20px 68px;gap:16px}
-  .h1a,.h1b{font-size:52px} .h1c{font-size:36px} #hrt{width:100%} .snum{font-size:34px}
-  .nl{display:none} nav{padding:0 18px} *{cursor:auto!important} #cursor{display:none!important}
-  .swrap,.wgrd,.tcon,#cnt div[style*="max-width:1400px"]{padding:40px 24px}.wgrd{grid-template-columns:1fr}
+  /* FIX 1: hero content starts below nav on mobile */
+  #ho{flex-direction:column;align-items:flex-start;
+    padding:70px 18px 80px;gap:12px;
+    justify-content:flex-start;overflow-y:auto;align-items:flex-start}
+  .h1a,.h1b{font-size:clamp(44px,13vw,68px)}
+  .h1c{font-size:clamp(30px,9vw,48px)}
+  .tag{font-size:13px;letter-spacing:0.15em}
+  #hrt{width:100%}.snum{font-size:28px}.sg{gap:12px 16px}.sc{padding:14px 16px}
+  .nl{display:none}nav{padding:0 18px}
+  *{cursor:auto!important}#cursor{display:none!important}
+  .swrap,.abt-inner,.tcon,.cnt-inner,.site-footer{padding-left:20px;padding-right:20px}
+  .swrap{flex-direction:column;padding-bottom:40px}
+  .abt-inner{flex-direction:column;gap:28px}
+  .abt-right{padding-left:0}
+  .contact-grid{grid-template-columns:1fr 1fr;gap:20px}
+  .contact-cell{border-right:none;padding:0 0 18px;border-bottom:1px solid rgba(185,28,28,.12)}
+  .contact-cell:last-child{border-bottom:none;padding-left:0;padding-bottom:0}
+  #abt-contact{padding:28px 20px;margin-top:32px}
+  .wgrd{grid-template-columns:1fr;padding:0 20px 40px}
+  .stat-row{grid-template-columns:1fr 1fr;padding:0 20px 40px}
+  .stat-cell{border-right:none;border-bottom:0.5px solid rgba(185,28,28,0.12)}
+  .tcon{padding:0 20px 40px}
+  .tcd{flex:0 0 280px}
+  .cnt-inner{flex-direction:column;padding:0 20px 40px}
+  .cnt-left{padding-right:0;border-right:none;border-bottom:0.5px solid rgba(185,28,28,0.2);padding-bottom:40px}
+  .cnt-right{padding-left:0;padding-top:32px;flex:none;width:100%}
+  .site-footer{flex-direction:column;gap:8px;text-align:center;padding:16px 20px}
+}
+@media(max-width:480px){
+  .h1a,.h1b{font-size:clamp(38px,12vw,56px)}
+  .h1c{font-size:clamp(26px,8vw,40px)}
+  #hrt{display:none}
 }
 </style>
 </head>
@@ -247,43 +233,57 @@ section{position:relative;z-index:5;background:#0a0604;}
 <div id="cursor">
   <svg viewBox="0 0 24 24" fill="none">
     <circle cx="12" cy="12" r="10" stroke="#c0392b" stroke-width="0.8"/>
-    <circle cx="12" cy="12" r="4"  stroke="#c0392b" stroke-width="0.8"/>
-    <line x1="12" y1="1"  x2="12" y2="6"  stroke="#c0392b" stroke-width="0.8"/>
+    <circle cx="12" cy="12" r="4" stroke="#c0392b" stroke-width="0.8"/>
+    <line x1="12" y1="1" x2="12" y2="6" stroke="#c0392b" stroke-width="0.8"/>
     <line x1="12" y1="18" x2="12" y2="23" stroke="#c0392b" stroke-width="0.8"/>
-    <line x1="1"  y1="12" x2="6"  y2="12" stroke="#c0392b" stroke-width="0.8"/>
+    <line x1="1" y1="12" x2="6" y2="12" stroke="#c0392b" stroke-width="0.8"/>
     <line x1="18" y1="12" x2="23" y2="12" stroke="#c0392b" stroke-width="0.8"/>
     <circle cx="12" cy="12" r="1.2" fill="#c0392b"/>
   </svg>
 </div>
 <div id="scanlines"></div>
+
 <nav id="nav">
   <div class="logo-text">RSM<span>Security Services</span></div>
-  <div class="nl"><a href="#hero">Home</a><a href="#srv">Services</a><a href="#abt">About</a><a href="#why">Why Us</a><a href="#tst">Clients</a><a href="#cnt">Contact</a></div>
+  <div class="nl">
+    <a href="#hero">Home</a><a href="#srv">Services</a><a href="#abt">About</a>
+    <a href="#why">Why Us</a><a href="#tst">Clients</a><a href="#cnt">Contact</a>
+  </div>
 </nav>
+
+<!-- ══ HERO ══ -->
 <section id="hero">
   <canvas id="three-canvas"></canvas>
   <div id="vig"></div>
   <div id="sec-ov"></div>
   <div id="hud">
-    <div class="cbr" id="ctl"></div><div class="cbr" id="ctr"></div><div class="cbr" id="cbl"></div><div class="cbr" id="cbr"></div>
-    <div class="hc">LAT 13.0062°N · LON 76.0998°E · KARNATAKA</div><div class="hl"></div>
-    <div class="hm">AREA SECURED</div><div class="hl"></div>
-    <div class="hs">Protected by RSM Security Services</div>
+    <div class="cbr" id="ctl"></div><div class="cbr" id="ctr"></div>
+    <div class="cbr" id="cbl"></div><div class="cbr" id="cbr2"></div>
+    <div class="hc">LAT 13.0062°N · LON 76.0998°E · KARNATAKA</div>
+    <div class="hl"></div><div class="hm">AREA SECURED</div>
+    <div class="hl"></div><div class="hs">Protected by RSM Security Services</div>
   </div>
   <div id="ho">
     <div id="hlft">
       <div class="brow"><div class="pd"></div><span class="btx">Operational Since 2011 · Hassan &amp; Bengaluru</span></div>
-      <span class="h1a">RSM</span><span class="h1b">SECURITY</span><span class="h1c">SERVICES</span>
+      <span class="h1a">RSM</span>
+      <span class="h1b">SECURITY</span>
+      <span class="h1c">SERVICES</span>
       <div class="tag">Precision. Protection. Performance.</div>
       <div class="sbt">Industrial · Facility Management · Labour Supply</div>
-      <div class="ctr"><a href="#srv" class="btn-p">Explore Services</a><a href="#cnt" class="btn-s">Contact Us</a></div>
+      <div class="ctr2">
+        <a href="#srv" class="btn-p">Explore Services</a>
+        <a href="#cnt" class="btn-s">Contact Us</a>
+      </div>
     </div>
     <div id="hrt">
       <div class="sc">
         <div class="sg">
-          <div class="si"><span class="snum">13+</span><span class="slbl">Years Active</span></div><div class="si"><span class="snum">500+</span><span class="slbl">Clients Served</span></div>
+          <div class="si"><span class="snum">13+</span><span class="slbl">Years Active</span></div>
+          <div class="si"><span class="snum">500+</span><span class="slbl">Clients Served</span></div>
           <div class="sdv"></div>
-          <div class="si"><span class="snum">12</span><span class="slbl">Service Types</span></div><div class="si"><span class="snum">2011</span><span class="slbl">Established</span></div>
+          <div class="si"><span class="snum">12</span><span class="slbl">Service Types</span></div>
+          <div class="si"><span class="snum">2011</span><span class="slbl">Established</span></div>
         </div>
         <div class="sft">RSM · Hassan, Karnataka, India</div>
       </div>
@@ -291,497 +291,495 @@ section{position:relative;z-index:5;background:#0a0604;}
   </div>
 </section>
 
+<!-- Ticker 1 -->
 <div class="tk"><div class="tki">
-<span class="d">◆</span><span>Industrial Security</span><span class="d">◆</span><span>Watchman</span><span class="d">◆</span><span>Gunman</span><span class="d">◆</span><span>Body Guard</span><span class="d">◆</span><span>Facility Management</span><span class="d">◆</span><span>Housekeeping</span><span class="d">◆</span><span>Pest Control</span><span class="d">◆</span><span>Labour Supply</span>
-<span class="d">◆</span><span>Industrial Security</span><span class="d">◆</span><span>Watchman</span><span class="d">◆</span><span>Gunman</span><span class="d">◆</span><span>Body Guard</span><span class="d">◆</span><span>Facility Management</span><span class="d">◆</span><span>Housekeeping</span><span class="d">◆</span><span>Pest Control</span><span class="d">◆</span><span>Labour Supply</span>
-<span class="d">◆</span><span>Industrial Security</span><span class="d">◆</span><span>Watchman</span><span class="d">◆</span><span>Gunman</span><span class="d">◆</span><span>Body Guard</span><span class="d">◆</span><span>Facility Management</span><span class="d">◆</span><span>Housekeeping</span><span class="d">◆</span><span>Pest Control</span><span class="d">◆</span><span>Labour Supply</span>
-<span class="d">◆</span><span>Industrial Security</span><span class="d">◆</span><span>Watchman</span><span class="d">◆</span><span>Gunman</span><span class="d">◆</span><span>Body Guard</span><span class="d">◆</span><span>Facility Management</span><span class="d">◆</span><span>Housekeeping</span><span class="d">◆</span><span>Pest Control</span><span class="d">◆</span><span>Labour Supply</span>
+  <span class="d">◆</span><span>Industrial Security</span><span class="d">◆</span><span>Watchman</span><span class="d">◆</span><span>Gunman</span><span class="d">◆</span><span>Body Guard</span><span class="d">◆</span><span>Facility Management</span><span class="d">◆</span><span>Housekeeping</span><span class="d">◆</span><span>Pest Control</span><span class="d">◆</span><span>Labour Supply</span><span class="d">◆</span><span>Vehicle Management</span><span class="d">◆</span><span>Tour Management</span>
+  <span class="d">◆</span><span>Industrial Security</span><span class="d">◆</span><span>Watchman</span><span class="d">◆</span><span>Gunman</span><span class="d">◆</span><span>Body Guard</span><span class="d">◆</span><span>Facility Management</span><span class="d">◆</span><span>Housekeeping</span><span class="d">◆</span><span>Pest Control</span><span class="d">◆</span><span>Labour Supply</span><span class="d">◆</span><span>Vehicle Management</span><span class="d">◆</span><span>Tour Management</span>
 </div></div>
 
-<section id="srv" style="padding:80px 0;min-height:100vh">
-  <div style="text-align:center">
-    <!-- SECTION HEADER: "WHAT WE DELIVER" -->
+<!-- ══ SERVICES ══ -->
+<section id="srv" class="sec-pad">
+  <div class="sec-head">
     <div style="display:inline-block">
-      <div class="glass-title section-hd" data-glow>
-        <span>WHAT WE DELIVER</span>
-        <div class="glow"></div>
-      </div>
+      <div class="glass-title section-hd" data-glow><span>WHAT WE DELIVER</span><div class="glow"></div></div>
     </div>
     <div class="f-ant c-ow" style="font-size:72px;line-height:1;margin-top:8px">Our Services</div>
-    <div style="width:64px;height:2px;background:#b91c1c;margin:16px auto"></div>
+    <div class="red-bar"></div>
   </div>
   <div class="swrap">
     <div class="scol">
-      <!-- RED GLASS TITLE: Security & Facility -->
-      <div class="glass-title red" data-glow>
-        <span>Security &amp; Facility</span>
-        <div class="glow"></div>
-      </div>
-      <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M2 20h20M4 20V8l6 3V6l6 3v11M16 20V4l6 3v13M8 17h2"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Industrial Security</div><div class="f-mon c-mut" style="font-size:11px">Comprehensive protection for manufacturing.</div></div></div>
-      <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Housing Society Protection</div><div class="f-mon c-mut" style="font-size:11px">24/7 guarded security for complexes.</div></div></div>
-      <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Gunman &amp; Body Guard</div><div class="f-mon c-mut" style="font-size:11px">Armed personnel &amp; VIP protection.</div></div></div>
-      <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Facility Management</div><div class="f-mon c-mut" style="font-size:11px">Repair, Restore, Maintain &amp; Represent.</div></div></div>
+      <div class="glass-title red" data-glow><span>Security &amp; Facility</span><div class="glow"></div></div>
+      <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M2 20h20M4 20V8l6 3V6l6 3v11M16 20V4l6 3v13"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px">Industrial Security</div><div class="f-mon c-mut" style="font-size:11px">Comprehensive protection for manufacturing.</div></div></div>
+      <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px">Housing Society Protection</div><div class="f-mon c-mut" style="font-size:11px">24/7 guarded security for complexes.</div></div></div>
+      <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px">Gunman &amp; Body Guard</div><div class="f-mon c-mut" style="font-size:11px">Armed personnel &amp; VIP protection.</div></div></div>
+      <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px">Facility Management</div><div class="f-mon c-mut" style="font-size:11px">Repair, Restore, Maintain &amp; Represent.</div></div></div>
+      <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px">Housekeeping</div><div class="f-mon c-mut" style="font-size:11px">Professional cleaning &amp; upkeep services.</div></div></div>
+      <div class="scard sc-r he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px">Pest Control</div><div class="f-mon c-mut" style="font-size:11px">Certified pest management solutions.</div></div></div>
     </div>
     <div class="scol">
-      <!-- GOLD GLASS TITLE: Labour Management -->
-      <div class="glass-title gold" data-glow>
-        <span>Labour Management</span>
-        <div class="glow"></div>
-      </div>
-      <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Qualified &amp; Experienced Staff</div><div class="f-mon c-mut" style="font-size:11px">Vetted professional personnel.</div></div></div>
-      <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Skilled Operators</div><div class="f-mon c-mut" style="font-size:11px">Professionally trained operational staff.</div></div></div>
-      <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Performance Measured</div><div class="f-mon c-mut" style="font-size:11px">Metrics-driven service standards.</div></div></div>
-      <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px;letter-spacing:1px">Technical &amp; Office Roles</div><div class="f-mon c-mut" style="font-size:11px">Labour for technical operations across Karnataka.</div></div></div>
+      <div class="glass-title gold" data-glow><span>Labour Management</span><div class="glow"></div></div>
+      <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px">Qualified &amp; Experienced Staff</div><div class="f-mon c-mut" style="font-size:11px">Vetted professional personnel.</div></div></div>
+      <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33H15a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px">Skilled Operators</div><div class="f-mon c-mut" style="font-size:11px">Professionally trained operational staff.</div></div></div>
+      <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px">Performance Measured</div><div class="f-mon c-mut" style="font-size:11px">Metrics-driven service standards.</div></div></div>
+      <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px">Flexible Deployment</div><div class="f-mon c-mut" style="font-size:11px">Scale workforce to your requirement.</div></div></div>
+      <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px">Minimum Turnaround</div><div class="f-mon c-mut" style="font-size:11px">Rapid deployment, minimal downtime.</div></div></div>
+      <div class="scard sc-g he"><div class="sci"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><div><div class="f-ant c-ow" style="font-size:20px">Technical &amp; Office Roles</div><div class="f-mon c-mut" style="font-size:11px">Labour for technical operations across Karnataka.</div></div></div>
     </div>
   </div>
 </section>
 
-<style>
-/* ─── ABOUT SECTION ─── */
-#abt { background: #111208; padding: 80px 0 0; }
-.abt-inner { max-width: 1400px; margin: 0 auto; padding: 0 80px; display: flex; gap: 60px; }
-.abt-left { flex: 0 0 42%; }
-.abt-right { flex: 1; position: relative; padding-left: 48px; }
+<!-- Ticker 2 — FIX 2: uniform divider between sections, both sides 80px -->
+<div class="tk"><div class="tki">
+  <span class="d">◆</span><span>RSM Security Services</span><span class="d">◆</span><span>Est. 2011</span><span class="d">◆</span><span>Hassan</span><span class="d">◆</span><span>Bengaluru</span><span class="d">◆</span><span>Karnataka</span><span class="d">◆</span><span>13+ Years</span><span class="d">◆</span><span>500+ Clients</span><span class="d">◆</span><span>Precision · Protection · Performance</span>
+  <span class="d">◆</span><span>RSM Security Services</span><span class="d">◆</span><span>Est. 2011</span><span class="d">◆</span><span>Hassan</span><span class="d">◆</span><span>Bengaluru</span><span class="d">◆</span><span>Karnataka</span><span class="d">◆</span><span>13+ Years</span><span class="d">◆</span><span>500+ Clients</span><span class="d">◆</span><span>Precision · Protection · Performance</span>
+</div></div>
 
-/* Timeline — line only spans between dots, not past the last one */
-.timeline-track {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-.tl-item {
-  position: relative;
-  padding-left: 36px;
-  padding-bottom: 32px;
-}
-/* Line runs between items, stop before the last */
-.tl-item:not(:last-child)::before {
-  content: '';
-  position: absolute;
-  left: 7px;
-  top: 22px;
-  bottom: -10px;
-  width: 1px;
-  background: linear-gradient(to bottom, rgba(185,28,28,0.5), rgba(185,28,28,0.1));
-}
-/* Dot */
-.tl-item::after {
-  content: '';
-  position: absolute;
-  left: 3px;
-  top: 10px;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #b91c1c;
-}
-.tl-item:first-child::after {
-  box-shadow: 0 0 12px rgba(185,28,28,.7);
-}
-.tl-item:last-child { padding-bottom: 0; }
-.tl-year {
-  font-family: 'Anton', sans-serif;
-  font-size: 34px;
-  color: #b91c1c;
-  line-height: 1;
-}
-.tl-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: rgba(138,138,122,0.85);
-  margin-top: 3px;
-  letter-spacing: 0.05em;
-}
-
-/* ─── CONTACT STRIP — full bleed below the two columns ─── */
-#abt-contact {
-  margin-top: 60px;
-  background: rgba(185,28,28,0.06);
-  border-top: 1px solid rgba(185,28,28,0.2);
-  border-bottom: 1px solid rgba(185,28,28,0.1);
-  padding: 36px 80px;
-}
-.contact-grid {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1.6fr;
-  gap: 0;
-}
-.contact-cell {
-  padding: 0 40px 0 0;
-  border-right: 1px solid rgba(185,28,28,0.15);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.contact-cell:last-child { border-right: none; padding-right: 0; padding-left: 40px; }
-.contact-cell:first-child { padding-left: 0; }
-.cc-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(200,80,20,0.6);
-}
-.cc-name {
-  font-family: 'Anton', sans-serif;
-  font-size: 26px;
-  letter-spacing: 0.06em;
-  color: #ede8d8;
-  line-height: 1;
-}
-.cc-phone {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 600;
-  font-size: 28px;
-  letter-spacing: 0.04em;
-  color: #c9a84c;
-  line-height: 1;
-}
-.cc-phone-sub {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  color: rgba(180,150,110,0.5);
-  letter-spacing: 0.1em;
-  margin-top: 2px;
-}
-.cc-addr {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 400;
-  font-size: 15px;
-  color: rgba(232,228,216,0.75);
-  line-height: 1.55;
-  letter-spacing: 0.02em;
-}
-.cc-icon {
-  width: 28px; height: 28px;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(185,28,28,0.12);
-  border: 1px solid rgba(185,28,28,0.2);
-  border-radius: 6px;
-  margin-bottom: 8px;
-}
-@media(max-width:900px){
-  .abt-inner{flex-direction:column;padding:0 24px}
-  .contact-grid{grid-template-columns:1fr 1fr;gap:28px}
-  .contact-cell{border-right:none;padding:0 0 24px;border-bottom:1px solid rgba(185,28,28,.15)}
-  .contact-cell:last-child{border-bottom:none;padding-left:0}
-  #abt-contact{padding:32px 24px}
-}
-</style>
-
-<section id="abt">
+<!-- ══ ABOUT ══ -->
+<section id="abt" class="sec-pad">
   <div class="abt-inner">
-    <!-- LEFT: intro -->
     <div class="abt-left">
-      <div class="glass-title timeline" data-glow style="margin-bottom:20px">
-        <span>EST. 2011 &middot; HASSAN, KARNATAKA</span>
-        <div class="glow"></div>
+      <div class="glass-title timeline-v" data-glow style="margin-bottom:20px">
+        <span>EST. 2011 · HASSAN, KARNATAKA</span><div class="glow"></div>
       </div>
       <h3 class="f-ant c-ow he" style="font-size:52px;line-height:1.08;margin:0 0 22px">Built on Trust.<br>Deployed with Precision.</h3>
-      <p class="c-ow he" style="font-size:15px;line-height:1.8;font-family:'Barlow Condensed',sans-serif;color:rgba(232,228,216,0.8)">RSM Security Services was founded in 2011 with a singular mission — to deliver professional, reliable, and disciplined security and facility management solutions to clients across Karnataka. From industrial premises to residential societies, we guard what matters most.</p>
+      <p class="he f-bc c-ow" style="font-size:15px;line-height:1.8;color:rgba(232,228,216,0.8);margin-bottom:16px">RSM Security Services was founded in 2011 with a singular mission — to deliver professional, reliable, and disciplined security and facility management solutions to clients across Karnataka. From industrial premises to residential societies, we guard what matters most.</p>
+      <p class="he f-bc c-ow" style="font-size:15px;line-height:1.8;color:rgba(232,228,216,0.7)">Our labour management division provides qualified, certified personnel for both technical and office operations, assessed through our proprietary skill matrix to ensure the right professional for every role.</p>
     </div>
-
-    <!-- RIGHT: timeline (line stops at 2025) -->
     <div class="abt-right">
-      <div class="timeline-track">
-        <div class="tl-item he">
-          <div class="tl-year">2011</div>
-          <div class="tl-label">RSM Security Founded, Hassan</div>
-        </div>
-        <div class="tl-item he">
-          <div class="tl-year">2015</div>
-          <div class="tl-label">Facility Management Services Added</div>
-        </div>
-        <div class="tl-item he">
-          <div class="tl-year">2019</div>
-          <div class="tl-label">200+ Active Clients Across Karnataka</div>
-        </div>
-        <div class="tl-item he">
-          <div class="tl-year">2025</div>
-          <div class="tl-label">500+ Clients · Hassan &amp; Bengaluru</div>
-        </div>
+      <div class="tl-track">
+        <div class="tl-item he"><div class="tl-year">2011</div><div class="tl-lbl">RSM Security Founded, Hassan, Karnataka</div></div>
+        <div class="tl-item he"><div class="tl-year">2013</div><div class="tl-lbl">Industrial &amp; Housing Security Division Launched</div></div>
+        <div class="tl-item he"><div class="tl-year">2015</div><div class="tl-lbl">Facility Management Services Added</div></div>
+        <div class="tl-item he"><div class="tl-year">2017</div><div class="tl-lbl">Labour Supply Division — Technical &amp; Office Staffing</div></div>
+        <div class="tl-item he"><div class="tl-year">2019</div><div class="tl-lbl">200+ Active Clients Across Karnataka</div></div>
+        <div class="tl-item he"><div class="tl-year">2022</div><div class="tl-lbl">12 Full Service Categories Operational</div></div>
+        <div class="tl-item he"><div class="tl-year">2025</div><div class="tl-lbl">500+ Clients · Hassan &amp; Bengaluru Operations</div></div>
       </div>
     </div>
   </div>
-
-  <!-- FULL-WIDTH CONTACT STRIP -->
   <div id="abt-contact">
     <div class="contact-grid">
-
-      <!-- Cell 1: Contact Person -->
       <div class="contact-cell">
-        <div class="cc-icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </div>
-        <div class="cc-label">Contact Person</div>
-        <div class="cc-name">SP MAHESH</div>
+        <div class="cc-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div class="cc-label">Contact Person</div><div class="cc-name">SP MAHESH</div>
         <div class="cc-phone-sub">Director, RSM Security Services</div>
       </div>
-
-      <!-- Cell 2: Mobile -->
       <div class="contact-cell">
-        <div class="cc-icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
-        </div>
-        <div class="cc-label">Mobile</div>
-        <div class="cc-phone">+91 97317 90907</div>
+        <div class="cc-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+        <div class="cc-label">Mobile</div><div class="cc-phone">+91 97317 90907</div>
         <div class="cc-phone-sub">SP Mahesh · Direct Line</div>
       </div>
-
-      <!-- Cell 3: Office -->
       <div class="contact-cell">
-        <div class="cc-icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.9 14a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.82 3h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 5.99 6l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        </div>
-        <div class="cc-label">Office</div>
-        <div class="cc-phone">+91 90148 59090</div>
+        <div class="cc-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.9 14 19.79 19.79 0 0 1 1.83 5.33 2 2 0 0 1 3.82 3h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 5.99 6l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+        <div class="cc-label">Office</div><div class="cc-phone">+91 90148 59090</div>
         <div class="cc-phone-sub">RSM Office Line</div>
       </div>
-
-      <!-- Cell 4: Address -->
       <div class="contact-cell">
-        <div class="cc-icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        </div>
+        <div class="cc-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
         <div class="cc-label">Address</div>
         <div class="cc-addr">Sampige Road, 1st Floor<br>Near Women Police Station<br>Hassan, Karnataka</div>
       </div>
-
     </div>
   </div>
 </section>
 
+<!-- Ticker 3 -->
+<div class="tk"><div class="tki">
+  <span class="d">◆</span><span>Watchman Services</span><span class="d">◆</span><span>Body Guard</span><span class="d">◆</span><span>Gunman</span><span class="d">◆</span><span>Pest Control</span><span class="d">◆</span><span>Gardening</span><span class="d">◆</span><span>Pantry Services</span><span class="d">◆</span><span>Cooks</span><span class="d">◆</span><span>Store Management</span><span class="d">◆</span><span>Food Services</span><span class="d">◆</span><span>Renting</span>
+  <span class="d">◆</span><span>Watchman Services</span><span class="d">◆</span><span>Body Guard</span><span class="d">◆</span><span>Gunman</span><span class="d">◆</span><span>Pest Control</span><span class="d">◆</span><span>Gardening</span><span class="d">◆</span><span>Pantry Services</span><span class="d">◆</span><span>Cooks</span><span class="d">◆</span><span>Store Management</span><span class="d">◆</span><span>Food Services</span><span class="d">◆</span><span>Renting</span>
+</div></div>
+
+<!-- ══ WHY US ══ -->
+<section id="why" class="sec-pad">
+  <div class="sec-head">
+    <div style="display:inline-block">
+      <div class="glass-title section-hd" data-glow><span>OPERATIONAL ADVANTAGE</span><div class="glow"></div></div>
+    </div>
+    <div class="f-ant c-ow" style="font-size:72px;line-height:1;margin-top:8px">Why RSM?</div>
+    <div class="red-bar"></div>
+  </div>
+  <div class="wgrd">
+    <div class="wcd he"><div class="wcd-icon">🛡️</div><div class="wcd-title">13+ Years Experience</div><div class="wcd-text">Over a decade of trusted security and facility operations across Karnataka.</div></div>
+    <div class="wcd he"><div class="wcd-icon">🎖️</div><div class="wcd-title">Trained &amp; Certified Staff</div><div class="wcd-text">Every guard and operator undergoes rigorous training and background verification.</div></div>
+    <div class="wcd he"><div class="wcd-icon">🏢</div><div class="wcd-title">End-to-End Solutions</div><div class="wcd-text">Security, housekeeping, pest control, labour — one partner for everything.</div></div>
+    <div class="wcd he"><div class="wcd-icon">⚙️</div><div class="wcd-title">Flexible Engagement</div><div class="wcd-text">Contract, temporary, or permanent deployment — scaled to your needs.</div></div>
+    <div class="wcd he"><div class="wcd-icon">⚡</div><div class="wcd-title">Rapid Response</div><div class="wcd-text">Minimum turnaround time — replacement personnel deployed within hours.</div></div>
+    <div class="wcd he"><div class="wcd-icon">🤝</div><div class="wcd-title">500+ Satisfied Clients</div><div class="wcd-text">From Bengaluru tech parks to Hassan industrial zones — trusted across sectors.</div></div>
+  </div>
+  <div class="stat-row">
+    <div class="stat-cell he"><div class="stat-n">13+</div><div class="stat-l">Years Active</div></div>
+    <div class="stat-cell he"><div class="stat-n">500+</div><div class="stat-l">Clients Served</div></div>
+    <div class="stat-cell he"><div class="stat-n">12</div><div class="stat-l">Service Types</div></div>
+    <div class="stat-cell he"><div class="stat-n">100+</div><div class="stat-l">Staff Deployed</div></div>
+  </div>
+</section>
+
+<!-- Ticker 4 -->
+<div class="tk"><div class="tki">
+  <span class="d">◆</span><span>+91 97317 90907</span><span class="d">◆</span><span>SP Mahesh</span><span class="d">◆</span><span>+91 63611 60346</span><span class="d">◆</span><span>Mithun</span><span class="d">◆</span><span>+91 90199 47419</span><span class="d">◆</span><span>Chirag</span><span class="d">◆</span><span>Office: +91 90148 59090</span><span class="d">◆</span><span>Hassan, Karnataka</span>
+  <span class="d">◆</span><span>+91 97317 90907</span><span class="d">◆</span><span>SP Mahesh</span><span class="d">◆</span><span>+91 63611 60346</span><span class="d">◆</span><span>Mithun</span><span class="d">◆</span><span>+91 90199 47419</span><span class="d">◆</span><span>Chirag</span><span class="d">◆</span><span>Office: +91 90148 59090</span><span class="d">◆</span><span>Hassan, Karnataka</span>
+</div></div>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section id="tst" class="sec-pad">
+  <div class="sec-head">
+    <div style="display:inline-block">
+      <div class="glass-title section-hd" data-glow><span>VOICES FROM THE FIELD</span><div class="glow"></div></div>
+    </div>
+    <div class="f-ant c-ow" style="font-size:72px;line-height:1;margin-top:8px">Client Trust</div>
+    <div class="red-bar"></div>
+  </div>
+  <div class="tcon">
+    <div class="tcd he"><div class="tcd-bg-q">"</div><div class="tcd-stars">★★★★★</div><div class="tcd-quote">RSM completely transformed our housing society's security. Their watchmen are disciplined, alert, and professionally trained. Night or day, we feel protected.</div><div class="tcd-name">Rajesh Kumar</div><div class="tcd-role">Secretary, Greenwood Residency, Bengaluru</div></div>
+    <div class="tcd he"><div class="tcd-bg-q">"</div><div class="tcd-stars">★★★★★</div><div class="tcd-quote">We have relied on RSM for facility management and pest control for over four years. Response time is exceptional and service quality never drops.</div><div class="tcd-name">Anita Sharma</div><div class="tcd-role">Admin Manager, Prestige Tech Towers, Hassan</div></div>
+    <div class="tcd he"><div class="tcd-bg-q">"</div><div class="tcd-stars">★★★★★</div><div class="tcd-quote">Their labour deployment process is unlike anything we've seen. The skill matrix approach means every technician they send is exactly right for the job.</div><div class="tcd-name">Venkat Rao</div><div class="tcd-role">Operations Head, Mantri Infrastructure Projects</div></div>
+    <div class="tcd he"><div class="tcd-bg-q">"</div><div class="tcd-stars">★★★★★</div><div class="tcd-quote">From pantry to vehicle management — RSM handles our entire facility. Hiring them was the best operational decision we've made in five years.</div><div class="tcd-name">Deepa Nair</div><div class="tcd-role">HR Director, Sobha Developers, Bengaluru</div></div>
+    <div class="tcd he"><div class="tcd-bg-q">"</div><div class="tcd-stars">★★★★★</div><div class="tcd-quote">RSM's body guard service gave our executive team complete confidence during a high-profile industry event. Absolute professionals.</div><div class="tcd-name">Suresh Patil</div><div class="tcd-role">CEO, Summit Hospitality Group, Mysuru</div></div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section id="cnt" class="sec-pad">
+  <div class="cnt-inner">
+    <div class="cnt-left">
+      <div class="glass-title section-hd" data-glow style="margin-bottom:24px"><span>GET IN TOUCH</span><div class="glow"></div></div>
+      <div class="cnt-title">READY TO<br>SECURE YOUR<br><em>FACILITY?</em></div>
+      <div class="cnt-sub">From security personnel to complete facility management — RSM delivers precision-trained professionals to your doorstep across Karnataka.</div>
+      <a href="tel:+919731790907" class="btn-p" style="cursor:pointer">Call Now: +91 97317 90907</a>
+      <div class="cnt-note">Response within 24 hours · Active in Hassan &amp; Bengaluru</div>
+    </div>
+    <div class="cnt-right">
+      <div class="cnt-card">
+        <div class="cnt-card-name">SP Mahesh</div>
+        <div class="cnt-card-num">+91 97317 90907</div>
+        <div class="cnt-card-sub">Director · Direct Line</div>
+      </div>
+      <div class="cnt-card">
+        <div class="cnt-card-name">Mithun</div>
+        <div class="cnt-card-num">+91 63611 60346</div>
+        <div class="cnt-card-sub">Operations</div>
+      </div>
+      <div class="cnt-card">
+        <div class="cnt-card-name">Chirag</div>
+        <div class="cnt-card-num">+91 90199 47419</div>
+        <div class="cnt-card-sub">Field Manager</div>
+      </div>
+      <div class="cnt-card gold">
+        <div class="cnt-card-name" style="color:#c9a84c">Office Line</div>
+        <div class="cnt-card-num">+91 90148 59090</div>
+        <div class="cnt-card-sub">RSM Office · Hassan</div>
+      </div>
+      <div class="cnt-addr-box">
+        <div class="cc-label" style="margin-bottom:8px">Office Address</div>
+        <div class="cnt-addr-txt">Sampige Road, 1st Floor, 1st Cross<br>Near Women Police Station<br>Hassan, Karnataka, India</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <p>RSM Security Services © 2025 · All Rights Reserved</p>
+  <p>Est. 2011 · Hassan, Karnataka, India</p>
+  <p>Precision. Protection. Performance.</p>
+</footer>
+
 <script>
-/* ─── CURSOR ─── */
-const curEl = document.getElementById('cursor');
-let mx=innerWidth/2,my=innerHeight/2,cx=mx,cy=my;
+// ── CURSOR
+const curEl=document.getElementById('cursor');
+let mx=innerWidth/2,my=innerHeight/2,cxc=mx,cyc=my;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
-(function t(){cx+=(mx-cx)*0.11;cy+=(my-cy)*0.11;
-  curEl.style.left=cx+'px';curEl.style.top=cy+'px';requestAnimationFrame(t)})();
+(function tc(){cxc+=(mx-cxc)*0.11;cyc+=(my-cyc)*0.11;curEl.style.left=cxc+'px';curEl.style.top=cyc+'px';requestAnimationFrame(tc)})();
 if('ontouchstart' in window)curEl.style.display='none';
-
 let mouseNX=0,mouseNY=0;
-document.addEventListener('mousemove',e=>{ mouseNX=(e.clientX/innerWidth-0.5)*2; mouseNY=(e.clientY/innerHeight-0.5)*2; });
+document.addEventListener('mousemove',e=>{mouseNX=(e.clientX/innerWidth-0.5)*2;mouseNY=(e.clientY/innerHeight-0.5)*2;});
 
-/* ─── SCROLL REVEAL ─── */
-const obs = new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){gsap.fromTo(e.target,{opacity:0,y:40},{opacity:1,y:0,duration:0.8,ease:'power3.out'});obs.unobserve(e.target);}});},{threshold:0.1});
+// FIX 5: Run IntersectionObserver setup immediately, not inside DOMContentLoaded
+// Set initial opacity via CSS class .he{opacity:0} rather than JS gsap.set
+const obs=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      gsap.fromTo(e.target,{opacity:0,y:40},{opacity:1,y:0,duration:0.8,ease:'power3.out'});
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:0.1});
 document.querySelectorAll('.he').forEach(e=>obs.observe(e));
-document.addEventListener('DOMContentLoaded',()=>gsap.set('.he',{opacity:0}));
 
-/* ─── PARALLAX GLOW ON ALL GLASS TITLES ─── */
-document.querySelectorAll('.glass-title[data-glow]').forEach(title => {
-  const glow = title.querySelector('.glow');
-  if (!glow) return;
-  title.addEventListener('mousemove', e => {
-    const r = title.getBoundingClientRect();
-    const x = e.clientX - r.left;
-    const y = e.clientY - r.top;
-    const moveX = (x - r.width  / 2) * 0.35;
-    const moveY = (y - r.height / 2) * 0.35;
-    glow.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+// Glass title parallax glow
+document.querySelectorAll('.glass-title[data-glow]').forEach(title=>{
+  const glow=title.querySelector('.glow');if(!glow)return;
+  title.addEventListener('mousemove',e=>{
+    const r=title.getBoundingClientRect();
+    const dx=(e.clientX-r.left-r.width/2)*0.35;
+    const dy=(e.clientY-r.top-r.height/2)*0.35;
+    glow.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;
   });
-  title.addEventListener('mouseleave', () => {
-    glow.style.transform = 'translate(-50%, -50%)';
-  });
+  title.addEventListener('mouseleave',()=>{glow.style.transform='translate(-50%,-50%)';});
 });
 
-/* ─── THREE.JS SCENE ─── */
+// ── THREE.JS
 const canvas=document.getElementById('three-canvas');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight);
-renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-const scene=new THREE.Scene(); scene.background=new THREE.Color(0x0a0604); scene.fog=new THREE.FogExp2(0x0a0604,0.018);
-const cam=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,0.1,600); cam.position.set(0,120,80); cam.lookAt(0,0,0);
-window.addEventListener('resize',()=>{ cam.aspect=innerWidth/innerHeight; cam.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); });
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x0a0604);scene.fog=new THREE.FogExp2(0x0a0604,0.018);
+const cam=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,0.1,600);
+cam.position.set(0,120,80);cam.lookAt(0,0,0);
+window.addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+
 scene.add(new THREE.AmbientLight(0x1a0c06,0.6));
-const warmKey=new THREE.DirectionalLight(0xe05010,1.1); warmKey.position.set(20,40,20);
-warmKey.castShadow=true; warmKey.shadow.mapSize.set(1024,1024);
-warmKey.shadow.camera.near=1;warmKey.shadow.camera.far=200; warmKey.shadow.camera.left=-80;warmKey.shadow.camera.right=80; warmKey.shadow.camera.top=80;warmKey.shadow.camera.bottom=-80; scene.add(warmKey);
-const redFill=new THREE.DirectionalLight(0xb91c1c,0.5); redFill.position.set(-20,20,-10); scene.add(redFill);
-const roadMat=new THREE.MeshLambertMaterial({color:0x1a1208}), paveMat=new THREE.MeshLambertMaterial({color:0x221808}), buildMat=new THREE.MeshLambertMaterial({color:0x120e08}), roofMat=new THREE.MeshLambertMaterial({color:0x0e0b06}), wallMat=new THREE.MeshLambertMaterial({color:0x1a1510});
-function neonEdge(col,op){ return new THREE.LineBasicMaterial({color:col,transparent:true,opacity:op}); }
-const orangeEdge=neonEdge(0xe05018,0.9), dimEdge=neonEdge(0x803010,0.45), goldEdgM=neonEdge(0xc9a84c,0.5);
-function addE(m,g,mat){ const e=new THREE.LineSegments(new THREE.EdgesGeometry(g),mat); m.add(e); }
-const groundM=new THREE.Mesh(new THREE.PlaneGeometry(300,300),roadMat); groundM.rotation.x=-Math.PI/2; groundM.position.y=-0.02; groundM.receiveShadow=true; scene.add(groundM);
-function makeRoad(w,d,x,z,ry=0){ const g=new THREE.BoxGeometry(w,0.05,d); const m=new THREE.Mesh(g,roadMat); m.position.set(x,0.01,z); m.rotation.y=ry; m.receiveShadow=true; scene.add(m); addE(m,g,dimEdge); }
-makeRoad(280,9,0,0); makeRoad(9,280,0,0); makeRoad(280,9,0,-55); makeRoad(280,9,0,55); makeRoad(9,280,-55,0); makeRoad(9,280,55,0);
-function laneDash(x,z,rot=0){ const g=new THREE.BoxGeometry(0.3,0.02,2.2); const m=new THREE.Mesh(g,new THREE.MeshLambertMaterial({color:0x605040})); m.position.set(x,0.04,z); m.rotation.y=rot; scene.add(m); }
-for(let i=-120;i<120;i+=6){ if(Math.abs(i)>6) laneDash(i,0); if(Math.abs(i)>6 && Math.abs(i+55)>6 && Math.abs(i-55)>6) laneDash(0,i,Math.PI/2); }
-for(let i=-120;i<120;i+=6){ if(Math.abs(i)>6){ laneDash(i,-55); laneDash(i,55); } }
-function crosswalk(cx,cz,w,horiz=true){ for(let i=-2;i<=2;i++){ const g=new THREE.BoxGeometry(horiz?1.2:w,0.03,horiz?w:1.2); const m=new THREE.Mesh(g,new THREE.MeshLambertMaterial({color:0x504030})); m.position.set(horiz?cx+i*1.8:cx,0.03,horiz?cz:cz+i*1.8); scene.add(m); } }
-crosswalk(-5.5,0,9,false); crosswalk(5.5,0,9,false); crosswalk(0,5.5,9,true); crosswalk(0,-5.5,9,true);
-crosswalk(-5.5,-55,9,false); crosswalk(5.5,-55,9,false); crosswalk(0,-49.5,9,true); crosswalk(0,-60.5,9,true);
-crosswalk(-5.5,55,9,false); crosswalk(5.5,55,9,false); crosswalk(0,60.5,9,true); crosswalk(0,49.5,9,true);
-function streetLight(x,z){ const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.1,4.5,6),new THREE.MeshLambertMaterial({color:0x222018})); pole.position.set(x,2.25,z); pole.castShadow=true; scene.add(pole); const arm=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.06,1.0),new THREE.MeshLambertMaterial({color:0x222018})); arm.position.set(x,4.5,z+0.5); scene.add(arm); const head=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.2,0.5),new THREE.MeshLambertMaterial({color:0xffcc60,emissive:0xffaa20,emissiveIntensity:1.2})); head.position.set(x,4.4,z+0.9); scene.add(head); const pl=new THREE.PointLight(0xff9922,1.2,18); pl.position.set(x,4.2,z+0.9); scene.add(pl); }
-[[-5,5],[5,5],[-5,-5],[5,-5],[-5,-50],[5,-50],[-5,50],[5,50]].forEach(([x,z])=>streetLight(x,z));
-function billboard(x, z, ry, label1, label2, label3, roofY = 0, legDist = 11, isSpecial = false) {
-  isSpecial = !!isSpecial;
-  const postH = roofY ? 6 : 12, postW = 0.5, boardW = 14, boardH = 7;
-  const grp = new THREE.Group();
-  const cX = roofY ? legDist / 2 : boardW * 0.4;
-  const postMat = new THREE.MeshLambertMaterial({ color: 0x333028 });
-  const post1 = new THREE.Mesh(new THREE.BoxGeometry(postW, postH, postW), postMat);
-  post1.position.set(-cX, -boardH / 2 - postH / 2, 0);
-  grp.add(post1);
-  const post2 = new THREE.Mesh(new THREE.BoxGeometry(postW, postH, postW), postMat);
-  post2.position.set(cX, -boardH / 2 - postH / 2, 0);
-  grp.add(post2);
-  const cvs = document.createElement('canvas');
-  cvs.width = 1024;
-  cvs.height = 600;
-  const ctx = cvs.getContext('2d');
-  const texture = new THREE.CanvasTexture(cvs);
-  texture.minFilter = THREE.LinearFilter;
-  texture.generateMipmaps = false;
-  const board = new THREE.Mesh(
-    new THREE.BoxGeometry(boardW, boardH, 0.4),
-    new THREE.MeshBasicMaterial({ map: texture })
-  );
+const warmKey=new THREE.DirectionalLight(0xe05010,1.1);warmKey.position.set(20,40,20);
+warmKey.castShadow=true;warmKey.shadow.mapSize.set(1024,1024);
+warmKey.shadow.camera.near=1;warmKey.shadow.camera.far=200;
+warmKey.shadow.camera.left=-80;warmKey.shadow.camera.right=80;
+warmKey.shadow.camera.top=80;warmKey.shadow.camera.bottom=-80;
+scene.add(warmKey);
+const redFill=new THREE.DirectionalLight(0xb91c1c,0.5);redFill.position.set(-20,20,-10);scene.add(redFill);
+
+const roadMat=new THREE.MeshLambertMaterial({color:0x1a1208});
+const buildMat=new THREE.MeshLambertMaterial({color:0x120e08});
+const wallMat=new THREE.MeshLambertMaterial({color:0x1a1510});
+function nE(col,op){return new THREE.LineBasicMaterial({color:col,transparent:true,opacity:op});}
+const oE=nE(0xe05018,0.9),dE=nE(0x803010,0.45);
+function addEdge(m,g,mat){m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),mat));}
+
+// Ground + roads
+const gnd=new THREE.Mesh(new THREE.PlaneGeometry(300,300),roadMat);gnd.rotation.x=-Math.PI/2;gnd.position.y=-0.02;gnd.receiveShadow=true;scene.add(gnd);
+function road(w,d,x,z){const g=new THREE.BoxGeometry(w,0.05,d);const m=new THREE.Mesh(g,roadMat);m.position.set(x,0.01,z);m.receiveShadow=true;scene.add(m);addEdge(m,g,dE);}
+road(280,9,0,0);road(9,280,0,0);road(280,9,0,-55);road(280,9,0,55);road(9,280,-55,0);road(9,280,55,0);
+for(let i=-120;i<120;i+=6){if(Math.abs(i)>6){const g=new THREE.BoxGeometry(0.3,0.02,2.2);[{x:i,z:0,r:0},{x:0,z:i,r:Math.PI/2}].forEach(d=>{const m=new THREE.Mesh(g,new THREE.MeshLambertMaterial({color:0x605040}));m.position.set(d.x,0.04,d.z);m.rotation.y=d.r;scene.add(m);});}}
+// Crosswalks
+[[-5.5,0,false],[5.5,0,false],[0,5.5,true],[0,-5.5,true]].forEach(([cx2,cz,h])=>{
+  for(let i=-2;i<=2;i++){const g=new THREE.BoxGeometry(h?1.2:9,0.03,h?9:1.2);const m=new THREE.Mesh(g,new THREE.MeshLambertMaterial({color:0x504030}));m.position.set(h?cx2+i*1.8:cx2,0.03,h?cz:cz+i*1.8);scene.add(m);}
+});
+// Street lights (FIX: reduced to 8 to stay under uniform limit)
+function sl(x,z){
+  const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.1,4.5,6),new THREE.MeshLambertMaterial({color:0x222018}));
+  pole.position.set(x,2.25,z);scene.add(pole);
+  const head=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.2,0.5),new THREE.MeshLambertMaterial({color:0xffcc60,emissive:0xffaa20,emissiveIntensity:1.2}));
+  head.position.set(x,4.4,z+0.5);scene.add(head);
+  const pl=new THREE.PointLight(0xff9922,1.2,18);pl.position.set(x,4.2,z+0.5);scene.add(pl);
+}
+[[-5,5],[5,5],[-5,-5],[5,-5],[-5,-50],[5,-50],[-5,50],[5,50]].forEach(([x,z])=>sl(x,z));
+
+// ── BILLBOARDS
+// FIX 3: store in array, loop directly (no scene.traverse)
+// FIX 4: scrollX resets at < -1024 not -1000
+// FIX billboard visibility: postH correct, mountY handled, cam y target matches
+const billboardUpdaters=[];
+function billboard(x,z,ry,label1,label2,label3,mountY,isSpecial){
+  isSpecial=!!isSpecial;
+  // When mountY is 0 (ground), postH=12. When on roof, postH=4 (short stub)
+  const onRoof=mountY&&mountY>0;
+  const postH=onRoof?4:12, boardW=14, boardH=7;
+  const grp=new THREE.Group();
+  const postMat=new THREE.MeshLambertMaterial({color:0x333028});
+  [-boardW*0.38,boardW*0.38].forEach(ox=>{
+    const p=new THREE.Mesh(new THREE.BoxGeometry(0.5,postH,0.5),postMat);
+    p.position.set(ox,-boardH/2-postH/2,0);grp.add(p);
+  });
+  const cvs=document.createElement('canvas');cvs.width=1024;cvs.height=600;
+  const ctx=cvs.getContext('2d');
+  const tex=new THREE.CanvasTexture(cvs);tex.minFilter=THREE.LinearFilter;tex.generateMipmaps=false;
+  const board=new THREE.Mesh(new THREE.BoxGeometry(boardW,boardH,0.4),new THREE.MeshBasicMaterial({map:tex,side:THREE.FrontSide}));
   grp.add(board);
-  const light = new THREE.PointLight(0xff5a1f, 2.5, 40);
-  light.position.set(0, 0, 3);
-  grp.add(light);
-  grp.position.set(x, (roofY || 0) + postH + boardH / 2, z);
-  grp.rotation.y = ry;
-  board.rotation.x = -0.08;
-  board.rotation.z = (Math.random() - 0.5) * 0.04;
+  const light=new THREE.PointLight(0xff5a1f,2.5,35);light.position.set(0,0,3);grp.add(light);
+  // Position: y = mountY + postH + boardH/2 so board top clears the post
+  grp.position.set(x,(mountY||0)+postH+boardH/2,z);
+  grp.rotation.y=ry;
+  board.rotation.x=-0.08;
   scene.add(grp);
-  let scrollX = 1024;
-  function drawFinal() {
-    ctx.clearRect(0, 0, 1024, 600);
-    ctx.fillStyle = '#0a0604';
-    ctx.fillRect(0, 0, 1024, 600);
-    ctx.textAlign = 'center';
-    if (isSpecial) {
-      ctx.shadowColor = '#ff5a1f';
-      ctx.shadowBlur = 25;
+  let scrollX=1024;
+  const update=()=>{
+    ctx.clearRect(0,0,1024,600);
+    ctx.fillStyle='#0a0604';ctx.fillRect(0,0,1024,600);
+    ctx.textAlign='center';
+    ctx.strokeStyle='#e05018';ctx.lineWidth=10;ctx.strokeRect(8,8,1008,584);
+    if(isSpecial){const buzz=0.7+Math.random()*0.6;ctx.shadowColor='#ff3c00';ctx.shadowBlur=20*buzz;ctx.fillStyle='#ff5522';ctx.font='bold 110px Outfit';}
+    else{ctx.shadowBlur=0;ctx.fillStyle='#e05018';ctx.font='bold 140px Anton';}
+    ctx.fillText(label1,512,195);
+    if(isSpecial){
+      ctx.shadowBlur=10;ctx.fillStyle='#ffffff';
+      const parts=label2.split(' ');
+      ctx.font='bold 70px "Noto Sans Devanagari"';ctx.fillText(parts[0]||label2,340,340);
+      ctx.font='bold 70px "Noto Sans Kannada"';ctx.fillText(parts[1]||'',680,340);
+    }else{
+      ctx.shadowBlur=0;ctx.fillStyle='#ffffff';ctx.font='bold 90px Barlow Condensed';
+      ctx.fillText(label2,512,340);
     }
-    ctx.strokeStyle = '#e05018';
-    ctx.lineWidth = 10;
-    ctx.strokeRect(8, 8, 1008, 584);
-    ctx.shadowBlur = 0;
-    const buzz = 0.7 + Math.random() * 0.6;
-    if (isSpecial) {
-      ctx.shadowColor = '#ff3c00';
-      ctx.shadowBlur = 20 * buzz;
-      ctx.fillStyle = '#ff5522';
-      ctx.font = 'bold 110px Outfit';
-    } else {
-      ctx.fillStyle = '#e05018';
-      ctx.font = 'bold 140px Anton';
-    }
-    ctx.fillText(label1, 512, 180);
-    if (isSpecial) {
-      ctx.shadowBlur = 10;
-      ctx.fillStyle = '#ffffff';
-      const parts = label2.split(' ');
-      ctx.font = 'bold 70px "Noto Sans Devanagari"';
-      ctx.fillText(parts[0], 350, 340);
-      ctx.font = 'bold 70px "Noto Sans Kannada"';
-      ctx.fillText(parts[1], 680, 340);
-    } else {
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 90px Barlow Condensed';
-      ctx.fillText(label2, 512, 340);
-    }
-    scrollX -= 4;
-    if (scrollX < -1000) scrollX = 1024;
-    ctx.shadowColor = '#ff7a2a';
-    ctx.shadowBlur = isSpecial ? 12 : 8;
-    ctx.fillStyle = '#ff8844';
-    ctx.font = '40px IBM Plex Mono';
-    ctx.fillText(label3 + "   ◆   " + label3, scrollX, 460);
-    ctx.shadowBlur = 0;
-    for (let i = 0; i < 20; i++) {
-      ctx.fillStyle = 'rgba(255,255,255,0.03)';
-      ctx.fillRect(Math.random() * 1024, Math.random() * 600, 2, Math.random() * 80);
-    }
-    texture.needsUpdate = true;
-  }
-  grp.userData.update = () => {
-    if (isSpecial) {
-      if (Math.random() > 0.7) { light.intensity = 0.5 + Math.random() * 3; }
-      else { light.intensity = 1.5; }
-    } else {
-      light.intensity = 1.2;
-    }
-    drawFinal();
+    // FIX 4: reset at -1024 for seamless loop
+    scrollX-=4;if(scrollX<-1024)scrollX=1024;
+    ctx.shadowColor='#ff7a2a';ctx.shadowBlur=isSpecial?12:8;
+    ctx.fillStyle='#ff8844';ctx.font='40px IBM Plex Mono';
+    ctx.fillText(label3+'   ◆   '+label3,scrollX,470);
+    ctx.shadowBlur=0;
+    tex.needsUpdate=true;
+    // Flicker light
+    if(isSpecial){light.intensity=Math.random()>0.7?0.5+Math.random()*3:1.5;}
+    else{light.intensity=1.2;}
   };
+  billboardUpdaters.push(update);
 }
+
+// 4 billboards at clearly distinct positions
+billboard(0,   -62,  0,              "RSM",          "SECURITY",    "SERVICES");          // far south, ground, faces north (camera)
+billboard(-45,  0,   Math.PI/2,      "24/7",         "PROTECTION",  "GUARANTEED");        // far west, ground, faces east
+// TRUST board: on 4th floor of NE office at (50,-25). 4 floors*2.6=10.4. postH=4, boardH/2=3.5 → board centre at 10.4+4+3.5=17.9
+billboard(50,  -25, -Math.PI*0.55,   "TRUST",        "DISCIPLINE",  "SAFETY",     10.4); // NE office 4th floor rooftop
+billboard(25,   20,  0,              "SACHIN STREET","सचिन ಸ್ಟ್ರೀಟ್","WELCOME TO SACHIN STREET",0,true); // mid-city, ground, neon flicker
+
+// ── BUILDINGS
+// FIX 1: handle types 's' and 'h' properly instead of falling to bare else
 function makeBuilding(x,z,floors,bw,bd,type){
-  const group=new THREE.Group(); const flH=2.6; const totalH=floors*flH;
-  if(type==='a'){
-    const base=new THREE.Mesh(new THREE.BoxGeometry(bw,totalH,bd),buildMat); base.position.y=totalH/2; base.castShadow=true; base.receiveShadow=true; addE(base,base.geometry,orangeEdge); group.add(base);
-    for(let f=1;f<floors;f++){ const ledge=new THREE.Mesh(new THREE.BoxGeometry(bw+0.5,0.15,bd+0.3),new THREE.MeshLambertMaterial({color:0x1a1208})); ledge.position.y=f*flH; addE(ledge,ledge.geometry,dimEdge); group.add(ledge); }
-    for(let f=0;f<floors;f++){ const wCols=Math.max(2,Math.floor(bw/1.6)); for(let c=0;c<wCols;c++){ const lit=Math.random()>0.35; const wM=new THREE.Mesh(new THREE.BoxGeometry(0.55,0.7,0.04),new THREE.MeshStandardMaterial({color:lit?0xffaa30:0x1a1208,emissive:lit?0xffaa30:0x000000,emissiveIntensity:lit?0.6:0})); wM.position.set(-bw/2+0.5+c*(bw/(wCols-0.5)),f*flH+flH*0.55,bd/2+0.04); group.add(wM); } }
+  const group=new THREE.Group();const flH=2.6;const totalH=floors*flH;
+  if(type==='a'||type==='s'){
+    // Apartment / shop — same base structure, shops get ground-floor sign colour
+    const base=new THREE.Mesh(new THREE.BoxGeometry(bw,totalH,bd),buildMat);
+    base.position.y=totalH/2;base.castShadow=true;base.receiveShadow=true;addEdge(base,base.geometry,oE);group.add(base);
+    // Balcony ledges
+    for(let f=1;f<floors;f++){
+      const ledge=new THREE.Mesh(new THREE.BoxGeometry(bw+0.5,0.15,bd+0.3),new THREE.MeshLambertMaterial({color:0x1a1208}));
+      ledge.position.y=f*flH;addEdge(ledge,ledge.geometry,dE);group.add(ledge);
+    }
+    // Windows
+    for(let f=0;f<floors;f++){
+      const wCols=Math.max(2,Math.floor(bw/1.6));
+      for(let c=0;c<wCols;c++){
+        const lit=Math.random()>0.35;
+        const wM=new THREE.Mesh(new THREE.BoxGeometry(0.55,0.7,0.04),
+          new THREE.MeshStandardMaterial({color:lit?0xffaa30:0x1a1208,emissive:lit?0xffaa30:0x000000,emissiveIntensity:lit?0.6:0}));
+        wM.position.set(-bw/2+0.5+c*(bw/(wCols-0.5)),f*flH+flH*0.55,bd/2+0.04);group.add(wM);
+      }
+    }
+    // Ground floor shop sign for 's' type
+    if(type==='s'){
+      const signGeo=new THREE.BoxGeometry(bw*0.7,0.4,0.05);
+      const sign=new THREE.Mesh(signGeo,new THREE.MeshStandardMaterial({color:0xe05018,emissive:0xe05018,emissiveIntensity:0.5}));
+      sign.position.set(0,flH*0.6,bd/2+0.04);group.add(sign);
+    }
   } else if(type==='o'){
-    const off=new THREE.Mesh(new THREE.BoxGeometry(bw,totalH,bd),new THREE.MeshLambertMaterial({color:0x0e0c10})); off.position.y=totalH/2; off.castShadow=true; addE(off,off.geometry,orangeEdge); group.add(off);
-    const wCols=Math.floor(bw/1.0), wRows=Math.floor(totalH/1.8);
-    for(let wr=0;wr<wRows;wr++){ for(let c=0;c<wCols;c++){ const lit=Math.random()>0.45; const wM=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.6,0.04),new THREE.MeshBasicMaterial({color:lit?0xffaa20:0x111018})); wM.position.set(-bw/2+0.6+c*(bw/(wCols-0.2)),1.0+wr*1.8,bd/2+0.03); group.add(wM); } }
-  } else {
-    const wall=new THREE.Mesh(new THREE.BoxGeometry(bw,totalH,bd),wallMat); wall.position.y=totalH/2; wall.castShadow=true; addE(wall,wall.geometry,orangeEdge); group.add(wall);
+    const off=new THREE.Mesh(new THREE.BoxGeometry(bw,totalH,bd),new THREE.MeshLambertMaterial({color:0x0e0c10}));
+    off.position.y=totalH/2;off.castShadow=true;addEdge(off,off.geometry,oE);group.add(off);
+    const wCols=Math.floor(bw),wRows=Math.floor(totalH/1.8);
+    for(let wr=0;wr<wRows;wr++){for(let c=0;c<wCols;c++){
+      const lit=Math.random()>0.45;
+      const wM=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.6,0.04),
+        new THREE.MeshStandardMaterial({color:lit?0xffaa20:0x111018,emissive:lit?0xffaa20:0x000000,emissiveIntensity:lit?0.5:0}));
+      wM.position.set(-bw/2+0.6+c*(bw/(wCols-0.2)),1.0+wr*1.8,bd/2+0.03);group.add(wM);
+    }}
+    // Rooftop ring
+    const rg=new THREE.TorusGeometry(bw*0.38,0.07,6,20);
+    const rm=new THREE.Mesh(rg,new THREE.MeshStandardMaterial({color:0xe05018,emissive:0xe05018,emissiveIntensity:1.5}));
+    rm.position.y=totalH+0.1;rm.rotation.x=Math.PI/2;group.add(rm);
+  } else if(type==='h'){
+    // House with pitched roof
+    const wall=new THREE.Mesh(new THREE.BoxGeometry(bw,totalH,bd),wallMat);
+    wall.position.y=totalH/2;wall.castShadow=true;addEdge(wall,wall.geometry,oE);group.add(wall);
+    // Pitched roof (pyramid)
+    const roofH=totalH*0.45;
+    const roof=new THREE.Mesh(new THREE.CylinderGeometry(0,Math.sqrt(bw*bw+bd*bd)*0.55,roofH,4,1),
+      new THREE.MeshLambertMaterial({color:0x0e0b06}));
+    roof.position.y=totalH+roofH/2;roof.rotation.y=Math.PI/4;group.add(roof);
+    // Windows
+    for(let f=0;f<floors;f++){
+      [[-bw*0.25,bd/2+0.04],[bw*0.25,bd/2+0.04]].forEach(([wx,wz])=>{
+        const lit=Math.random()>0.4;
+        const wM=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.6,0.04),
+          new THREE.MeshStandardMaterial({color:lit?0xffbb40:0x1a1208,emissive:lit?0xffbb40:0x000000,emissiveIntensity:lit?0.5:0}));
+        wM.position.set(wx,f*flH+flH*0.55,wz);group.add(wM);
+      });
+    }
   }
-  group.position.set(x,0,z); scene.add(group); return group;
+  group.position.set(x,0,z);scene.add(group);return group;
 }
-const lays = [
-  [-20,-20,4,7,6,'a'], [-30,-20,3,5,5,'a'], [-40,-20,5,8,5,'a'], [-20,-30,2,6,4,'s'], [-30,-30,2,5,4,'s'], [-40,-30,3,7,5,'a'], [-20,-40,3,5,5,'h'], [-30,-40,2,4,4,'h'], [-40,-40,4,6,5,'a'], [-50,-25,6,6,6,'o'], [-50,-38,3,6,5,'a'],
-  [20,-20,4,7,6,'a'], [30,-20,5,5,5,'o'], [40,-20,3,8,5,'a'], [20,-30,2,6,4,'s'], [30,-30,3,5,5,'a'], [40,-30,2,7,4,'s'], [20,-40,3,5,5,'h'], [30,-40,2,4,4,'h'], [40,-40,4,6,5,'a'], [50,-25,7,5,5,'o'], [50,-38,3,6,5,'a'],
-  [-20,20,4,7,6,'a'], [-30,20,3,5,5,'s'], [-40,20,5,8,5,'a'], [-20,30,2,6,4,'h'], [-30,30,2,5,4,'a'], [-40,30,3,7,5,'s'], [-20,40,3,5,5,'h'], [-30,40,2,4,4,'h'], [-40,40,4,6,5,'a'], [-50,25,6,6,6,'o'], [-50,38,3,6,5,'a'],
-  [20,20,4,7,6,'a'], [30,20,4,6,6,'a'], [40,20,3,8,5,'o'], [20,30,2,6,4,'s'], [30,30,3,5,5,'h'], [40,30,2,7,4,'a'], [20,40,3,5,5,'h'], [30,40,2,4,4,'h'], [40,40,4,6,5,'a'], [50,25,7,5,5,'o'], [50,38,3,6,5,'a'],
-  [-4,-28,8,6,6,'o'], [4,-28,9,5,5,'o'], [-4,28,8,6,6,'o'], [4,28,7,5,5,'o']
+
+const lays=[
+  [-20,-20,4,7,6,'a'],[-30,-20,3,5,5,'a'],[-40,-20,5,8,5,'a'],
+  [-20,-30,2,6,4,'s'],[-30,-30,2,5,4,'s'],[-40,-30,3,7,5,'a'],
+  [-20,-40,3,5,5,'h'],[-30,-40,2,4,4,'h'],[-40,-40,4,6,5,'a'],[-50,-25,6,6,6,'o'],[-50,-38,3,6,5,'a'],
+  [20,-20,4,7,6,'a'],[30,-20,5,5,5,'o'],[40,-20,3,8,5,'a'],
+  [20,-30,2,6,4,'s'],[30,-30,3,5,5,'a'],[40,-30,2,7,4,'s'],
+  [20,-40,3,5,5,'h'],[30,-40,2,4,4,'h'],[40,-40,4,6,5,'a'],[50,-25,7,5,5,'o'],[50,-38,3,6,5,'a'],
+  [-20,20,4,7,6,'a'],[-30,20,3,5,5,'s'],[-40,20,5,8,5,'a'],
+  [-20,30,2,6,4,'h'],[-30,30,2,5,4,'a'],[-40,30,3,7,5,'s'],
+  [-20,40,3,5,5,'h'],[-30,40,2,4,4,'h'],[-40,40,4,6,5,'a'],[-50,25,6,6,6,'o'],[-50,38,3,6,5,'a'],
+  [20,20,4,7,6,'a'],[30,20,4,6,6,'a'],[40,20,3,8,5,'o'],
+  [20,30,2,6,4,'s'],[30,30,3,5,5,'h'],[40,30,2,7,4,'a'],
+  [20,40,3,5,5,'h'],[30,40,2,4,4,'h'],[40,40,4,6,5,'a'],[50,25,7,5,5,'o'],[50,38,3,6,5,'a'],
+  [-4,-28,8,6,6,'o'],[4,-28,9,5,5,'o'],[-4,28,8,6,6,'o'],[4,28,7,5,5,'o']
 ];
-lays.forEach(b => makeBuilding(b[0],b[1],b[2],b[3],b[4],b[5]));
+lays.forEach(b=>makeBuilding(b[0],b[1],b[2],b[3],b[4],b[5]));
 for(let i=-3;i<=3;i++){
-  makeBuilding(i*18-4, -72, 3+Math.floor(Math.random()*3), 6+Math.random()*2, 5.5, i%2===0?'a':'s');
-  makeBuilding(i*18-4, 72, 3+Math.floor(Math.random()*3), 6+Math.random()*2, 5.5, i%2===0?'h':'a');
-  makeBuilding(-72, i*18-4, 3+Math.floor(Math.random()*3), 5.5, 6+Math.random(), 'a');
-  makeBuilding(72, i*18-4, 3+Math.floor(Math.random()*3), 5.5, 6+Math.random(), 'o');
+  makeBuilding(i*18-4,-72,3+Math.floor(Math.random()*3),6+Math.random()*2,5.5,i%2===0?'a':'s');
+  makeBuilding(i*18-4, 72,3+Math.floor(Math.random()*3),6+Math.random()*2,5.5,i%2===0?'h':'a');
+  makeBuilding(-72,i*18-4,3+Math.floor(Math.random()*3),5.5,6+Math.random(),'a');
+  makeBuilding( 72,i*18-4,3+Math.floor(Math.random()*3),5.5,6+Math.random(),'o');
 }
-billboard(0, -62, 0, "RSM", "SECURITY", "SERVICES");
-billboard(-45, 0, Math.PI / 2, "24/7", "PROTECTION", "GUARANTEED");
-billboard(45, 0, -Math.PI / 2, "TRUST", "DISCIPLINE", "SAFETY");
-billboard(25, 20, 0, "SACHIN STREET", "सचिन ಸ್ಟ್ರೀಟ್", "WELCOME TO SACHIN STREET", 10.4, 10, true);
-const PC=800; const pPos=new Float32Array(PC*3); const pSpeed=new Float32Array(PC);
-for(let i=0;i<PC;i++){ pPos[i*3]=(Math.random()-0.5)*140; pPos[i*3+1]=Math.random()*30; pPos[i*3+2]=(Math.random()-0.5)*140; pSpeed[i]=0.005+Math.random()*0.012; }
-const pGeo=new THREE.BufferGeometry(); pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
+
+// Particles
+const PC=800;const pPos=new Float32Array(PC*3);const pSpd=new Float32Array(PC);
+for(let i=0;i<PC;i++){pPos[i*3]=(Math.random()-0.5)*140;pPos[i*3+1]=Math.random()*30;pPos[i*3+2]=(Math.random()-0.5)*140;pSpd[i]=0.005+Math.random()*0.012;}
+const pGeo=new THREE.BufferGeometry();pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
 scene.add(new THREE.Points(pGeo,new THREE.PointsMaterial({color:0xff9922,size:0.12,transparent:true,opacity:0.4})));
-const camGroup=new THREE.Group(); const metalMat=new THREE.MeshLambertMaterial({color:0x1c1a14});
-const bodyM=new THREE.Mesh(new THREE.CylinderGeometry(1.0,1.3,3.0,10),metalMat); bodyM.rotation.z=Math.PI/2; camGroup.add(bodyM); addE(bodyM,bodyM.geometry,orangeEdge);
-const lensM=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.75,1.2,16), new THREE.MeshLambertMaterial({color:0xb91c1c,emissive:0xb91c1c,emissiveIntensity:1.0,transparent:true,opacity:0.95})); lensM.rotation.z=Math.PI/2; lensM.position.set(2.1,0,0); camGroup.add(lensM);
-const armM=new THREE.Mesh(new THREE.BoxGeometry(0.25,2.6,0.25),metalMat); armM.position.set(0,2.1,0); camGroup.add(armM);
-const plateM=new THREE.Mesh(new THREE.BoxGeometry(1.5,0.25,1.5),metalMat); plateM.position.set(0,3.5,0); camGroup.add(plateM);
-const lensLight=new THREE.PointLight(0xc0392b,0,28); lensLight.position.set(3,0,0); camGroup.add(lensLight);
-camGroup.position.set(0,100,0); scene.add(camGroup);
-const scanPlane=new THREE.Mesh(new THREE.PlaneGeometry(220,1.5), new THREE.MeshBasicMaterial({color:0xdd2200,transparent:true,opacity:0.25,side:THREE.DoubleSide})); scanPlane.rotation.x=-Math.PI/2; scanPlane.position.set(0,0.5,-110); scanPlane.visible=false; scene.add(scanPlane);
+
+// CC Camera
+const camGroup=new THREE.Group();
+const metalMat=new THREE.MeshLambertMaterial({color:0x1c1a14});
+const bodyM=new THREE.Mesh(new THREE.CylinderGeometry(1.0,1.3,3.0,10),metalMat);bodyM.rotation.z=Math.PI/2;camGroup.add(bodyM);addEdge(bodyM,bodyM.geometry,oE);
+const lensM=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.75,1.2,16),new THREE.MeshLambertMaterial({color:0xb91c1c,emissive:0xb91c1c,emissiveIntensity:1.0,transparent:true,opacity:0.95}));lensM.rotation.z=Math.PI/2;lensM.position.set(2.1,0,0);camGroup.add(lensM);
+const armM=new THREE.Mesh(new THREE.BoxGeometry(0.25,2.6,0.25),metalMat);armM.position.set(0,2.1,0);camGroup.add(armM);
+const plateM=new THREE.Mesh(new THREE.BoxGeometry(1.5,0.25,1.5),metalMat);plateM.position.set(0,3.5,0);camGroup.add(plateM);
+const lensLight=new THREE.PointLight(0xc0392b,0,28);lensLight.position.set(3,0,0);camGroup.add(lensLight);
+camGroup.position.set(0,100,0);scene.add(camGroup);
+
+// Scan plane
+const scanPlane=new THREE.Mesh(new THREE.PlaneGeometry(220,1.5),new THREE.MeshBasicMaterial({color:0xdd2200,transparent:true,opacity:0.25,side:THREE.DoubleSide}));
+scanPlane.rotation.x=-Math.PI/2;scanPlane.position.set(0,0.5,-110);scanPlane.visible=false;scene.add(scanPlane);
+
+// FIX 12: scan loop function — reusable, triggers on first sweep and repeats every 14s
+function runScan(){
+  scanPlane.visible=true;scanPlane.position.z=-110;
+  gsap.to(scanPlane.position,{z:110,duration:2.4,ease:'none',onComplete:()=>{
+    scanPlane.visible=false;
+    setTimeout(runScan,14000);
+  }});
+}
+
+// GSAP timeline
 const TL=gsap.timeline({delay:0.2});
-TL.to(cam.position,{x:0, y:42, z:58, duration:2.0, ease:'power2.inOut', onUpdate:()=>cam.lookAt(0,0,0)},0);
+TL.to(cam.position,{x:0,y:42,z:58,duration:2.0,ease:'power2.inOut',onUpdate:()=>cam.lookAt(0,0,0)},0);
 TL.to(scene.fog,{density:0.008,duration:2.0,ease:'power2.inOut'},0);
 TL.to(camGroup.position,{y:30,duration:1.2,ease:'back.out(1.15)'},2.0);
 TL.to(lensLight,{intensity:2.0,duration:0.5,ease:'power2.out'},3.0);
-TL.add(()=>{scanPlane.visible=true;scanPlane.position.z=-110;},3.2);
-TL.to(scanPlane.position,{z:110,duration:2.4,ease:'none'},3.2);
-TL.add(()=>{ gsap.to('#sec-ov',{opacity:1,duration:0.22,onComplete:()=>gsap.to('#sec-ov',{opacity:0.04,duration:0.4})}); gsap.to(['#ctl','#ctr','#cbl','#cbr'],{opacity:1,duration:0.2,stagger:0.06}); },5.4);
+TL.add(()=>runScan(),3.2);
+TL.add(()=>{
+  gsap.to('#sec-ov',{opacity:1,duration:0.22,onComplete:()=>gsap.to('#sec-ov',{opacity:0.04,duration:0.4})});
+  gsap.to(['#ctl','#ctr','#cbl','#cbr2'],{opacity:1,duration:0.2,stagger:0.06});
+},5.4);
 TL.fromTo('#hud',{opacity:0},{opacity:1,duration:0.25,ease:'none'},5.6);
 TL.to('#hud',{opacity:0.55,duration:0.07,yoyo:true,repeat:9,ease:'none'},5.85);
 TL.to('#hud',{opacity:1,duration:0.2},6.6);
-/* fade out HUD + brackets exactly as hero content comes in */
-TL.to(['#hud','#ctl','#ctr','#cbl','#cbr'],{opacity:0,duration:0.5,ease:'power2.in'},7.6);
-TL.to('nav', {opacity:1,duration:0.5,ease:'power2.out'},7.5);
-['.brow','.h1a','.h1b','.h1c','.tag','.sbt','.ctr'].forEach((s,i)=>{ TL.fromTo(s,{opacity:0,y:20},{opacity:1,y:0,duration:0.74,ease:'power3.out'},7.6+i*0.1); });
+TL.to(['#hud','#ctl','#ctr','#cbl','#cbr2'],{opacity:0,duration:0.5,ease:'power2.in'},7.6);
+TL.to('nav',{opacity:1,duration:0.5,ease:'power2.out'},7.5);
+['.brow','.h1a','.h1b','.h1c','.tag','.sbt','.ctr2'].forEach((s,i)=>{
+  TL.fromTo(s,{opacity:0,y:20},{opacity:1,y:0,duration:0.74,ease:'power3.out'},7.6+i*0.1);
+});
 TL.fromTo('#hrt',{opacity:0,x:26},{opacity:1,x:0,duration:0.55,ease:'power3.out'},7.6);
+
+// ── RENDER LOOP
 let clk=0;
 (function loop(){
   requestAnimationFrame(loop);clk+=0.016;
+  // Particles
   const pa=pGeo.attributes.position.array;
-  for(let i=0;i<PC;i++){pa[i*3+1]+=pSpeed[i];if(pa[i*3+1]>30)pa[i*3+1]=0;} pGeo.attributes.position.needsUpdate=true;
-  if(camGroup.position.y<60){ camGroup.rotation.y+=0.002; camGroup.position.y=30+Math.sin(clk*0.35)*0.45; }
+  for(let i=0;i<PC;i++){pa[i*3+1]+=pSpd[i];if(pa[i*3+1]>30)pa[i*3+1]=0;}
+  pGeo.attributes.position.needsUpdate=true;
+  // CC camera
+  if(camGroup.position.y<60){camGroup.rotation.y+=0.002;camGroup.position.y=30+Math.sin(clk*0.35)*0.45;}
   scene.rotation.y+=0.00025;
-  if(camGroup.position.y<60){ cam.position.x+=(mouseNX*4-cam.position.x)*0.015; cam.lookAt(mouseNX*2,0,mouseNY*2); }
-  scene.traverse(obj => { if (obj.userData.update) obj.userData.update(); });
+  if(camGroup.position.y<60){cam.position.x+=(mouseNX*4-cam.position.x)*0.015;cam.lookAt(mouseNX*2,0,mouseNY*2);}
+  // FIX 3: direct array loop instead of scene.traverse
+  for(let i=0;i<billboardUpdaters.length;i++)billboardUpdaters[i]();
   renderer.render(scene,cam);
 })();
 </script>
